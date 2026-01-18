@@ -24,7 +24,12 @@ class Settings(BaseSettings):
 
     # Application
     debug: bool = False
-    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:3333"]
+    cors_origins_str: str = "http://localhost:3000,http://localhost:3333"
+
+    @property
+    def cors_origins(self) -> list[str]:
+        """Parse comma-separated CORS origins."""
+        return [origin.strip() for origin in self.cors_origins_str.split(",")]
 
 
 settings = Settings()

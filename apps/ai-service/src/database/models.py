@@ -1,8 +1,9 @@
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
+from uuid import UUID, uuid4
 from sqlmodel import Field, SQLModel, Relationship
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import Column
+from sqlalchemy import Column, JSON
 
 
 # ==========================================
@@ -67,7 +68,7 @@ class ChatSession(SQLModel, table=True):
     __tablename__ = "chat_sessions"
 
     id: Optional[int] = Field(default=None, primary_key=True)
-    session_id: str = Field(unique=True, index=True)  # UUID
+    session_id: UUID = Field(default_factory=uuid4, unique=True, index=True)
     agent_slug: str = Field(index=True)
     user_identifier: Optional[str] = None  # Optional user tracking
     created_at: datetime = Field(default_factory=datetime.utcnow)
@@ -86,7 +87,7 @@ class ChatMessage(SQLModel, table=True):
     session_id: int = Field(foreign_key="chat_sessions.id", index=True)
     role: str  # "user" | "assistant" | "system"
     content: str
-    tool_calls: Optional[str] = None  # JSON string of tool calls
+    tool_calls: Optional[dict[str, Any]] = Field(default=None, sa_column=Column(JSON))
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     # Relationships
@@ -106,7 +107,7 @@ class KnowledgeDocument(SQLModel, table=True):
     title: str
     content: str
     source: str  # "cv", "project", "manual"
-    metadata: Optional[str] = None  # JSON metadata
+    doc_metadata: Optional[dict[str, Any]] = Field(default=None, sa_column=Column("metadata", JSON))  # JSON metadata
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 

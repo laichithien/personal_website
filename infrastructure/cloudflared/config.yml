@@ -1,0 +1,19 @@
+# Cloudflare Tunnel Configuration for Transparent Core
+
+tunnel: fc4ed5e5-4557-4990-b745-923085916b68
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  # Frontend - Next.js
+  - hostname: yourdomain.com
+    service: http://web:3000
+
+  - hostname: www.yourdomain.com
+    service: http://web:3000
+
+  # API - FastAPI
+  - hostname: api.yourdomain.com
+    service: http://api:8000
+
+  # Catch-all rule (required)
+  - service: http_status:404

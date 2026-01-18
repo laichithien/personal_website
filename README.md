@@ -163,6 +163,8 @@ npm run dev
 
 ## Docker Commands
 
+### Development (with hot reload)
+
 ```bash
 # Start all services
 docker compose up -d
@@ -176,15 +178,52 @@ docker compose up -d web
 docker compose logs -f
 docker compose logs -f api
 
+# Rebuild after changes
+docker compose up -d --build
+```
+
+### Production (optimized build)
+
+```bash
+# Start production stack
+docker compose -f docker-compose.prod.yml up -d
+
+# View logs
+docker compose -f docker-compose.prod.yml logs -f
+
+# Rebuild production images
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+### Common Commands (both dev & prod)
+
+```bash
 # Stop all services
 docker compose down
 
-# Rebuild after changes
-docker compose up -d --build
-
-# Reset database
+# Reset database (removes all data)
 docker compose down -v
-docker compose up -d
+```
+
+## Cloudflare Tunnel
+
+The project includes Cloudflare Tunnel for public access.
+
+**Production URLs:**
+- Frontend: https://yourdomain.com
+- API: https://api.yourdomain.com
+
+**Tunnel Configuration:**
+- Config: `infrastructure/cloudflared/config.yml`
+- Credentials: `infrastructure/cloudflared/credentials.json`
+
+**Manage Tunnel:**
+```bash
+# List tunnels
+cloudflared tunnel list
+
+# Check tunnel status
+docker compose -f docker-compose.prod.yml logs cloudflared
 ```
 
 ## Development Notes

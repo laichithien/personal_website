@@ -5,11 +5,28 @@ This allows changing agent behavior (prompt, tools, model) via database
 updates without redeploying code.
 """
 
+from openai import AsyncOpenAI
 from pydantic_ai import Agent
+from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.providers.openai import OpenAIProvider
 from sqlmodel import Session, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.models import AgentConfig, AgentToolLink, ToolDefinition
 from src.agent.registry import get_tool, ToolFunction
+from src.config import settings
+
+
+def get_openrouter_model(model_name: str) -> OpenAIModel:
+    """Create an OpenAI model configured for OpenRouter."""
+    # Create custom client with OpenRouter base URL
+    client = AsyncOpenAI(
+        api_key=settings.openai_api_key,
+        base_url=settings.openai_base_url,
+    )
+    # Create provider with custom client
+    provider = OpenAIProvider(openai_client=client)
+    # Return OpenAI model with custom provider
+    return OpenAIModel(model_name, provider=provider)
 
 
 class AgentNotFoundError(Exception):
@@ -49,9 +66,15 @@ class AgentFactory:
         # 2. Fetch assigned tools
         tools = self._load_agent_tools(config.id)
 
-        # 3. Build and return agent
+        # 3. Build model with OpenRouter support
+        if config.model_provider == "openai" and settings.openai_base_url:
+            model = get_openrouter_model(config.model_name)
+        else:
+            model = f"{config.model_provider}:{config.model_name}"
+
+        # 4. Build and return agent
         return Agent(
-            model=f"{config.model_provider}:{config.model_name}",
+            model=model,
             system_prompt=config.system_prompt,
             tools=tools,
         )
@@ -117,9 +140,15 @@ class AsyncAgentFactory:
         # 2. Fetch assigned tools
         tools = await self._load_agent_tools(config.id)
 
-        # 3. Build and return agent
+        # 3. Build model with OpenRouter support
+        if config.model_provider == "openai" and settings.openai_base_url:
+            model = get_openrouter_model(config.model_name)
+        else:
+            model = f"{config.model_provider}:{config.model_name}"
+
+        # 4. Build and return agent
         return Agent(
-            model=f"{config.model_provider}:{config.model_name}",
+            model=model,
             system_prompt=config.system_prompt,
             tools=tools,
         )

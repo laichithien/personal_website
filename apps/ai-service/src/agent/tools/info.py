@@ -9,8 +9,11 @@ def get_cv_info() -> str:
         Formatted CV information
     """
     return """
-    Name: Thiện
+    Name: Lai Chi Thiện (Thiện)
     Role: AI Engineer @ Vexere
+    Email: contact@yourdomain.com
+    GitHub: github.com/laichithien
+    LinkedIn: linkedin.com/in/chi-thien-lai
 
     Experience:
     - AI/ML system development
@@ -41,9 +44,8 @@ def get_contact_info() -> str:
     """
     return """
     Email: contact@yourdomain.com
-    GitHub: github.com/chithien
-    LinkedIn: linkedin.com/in/chithien
-    Website: yourdomain.com
+    GitHub: github.com/laichithien
+    LinkedIn: linkedin.com/in/chi-thien-lai
     """
 
 

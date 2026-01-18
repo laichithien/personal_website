@@ -1,5 +1,5 @@
-import uuid
 from datetime import datetime
+from uuid import UUID, uuid4
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
@@ -47,15 +47,22 @@ async def chat(
         raise HTTPException(status_code=404, detail=str(e))
 
     # 2. Get or create session (ASYNC)
-    session_id = request.session_id or str(uuid.uuid4())
+    if request.session_id:
+        try:
+            session_uuid = UUID(request.session_id)
+        except ValueError:
+            session_uuid = uuid4()
+    else:
+        session_uuid = uuid4()
+
     result = await db.execute(
-        select(ChatSession).where(ChatSession.session_id == session_id)
+        select(ChatSession).where(ChatSession.session_id == session_uuid)
     )
     chat_session = result.scalar_one_or_none()
 
     if not chat_session:
         chat_session = ChatSession(
-            session_id=session_id,
+            session_id=session_uuid,
             agent_slug=agent_slug,
         )
         db.add(chat_session)
@@ -98,17 +105,20 @@ async def chat(
             request.message,
             message_history=context_messages,
         )
-        response_text = result.data
+        # Get response - output is the response text for string output type
+        response_text = str(result.output) if result.output else ""
 
         # Extract tool calls if any
         tool_calls = None
         if result.all_messages():
-            tool_calls = [
-                str(msg) for msg in result.all_messages()
-                if hasattr(msg, 'parts') and any(
-                    hasattr(p, 'tool_name') for p in getattr(msg, 'parts', [])
-                )
-            ]
+            tool_call_list = []
+            for msg in result.all_messages():
+                if hasattr(msg, 'parts'):
+                    for p in msg.parts:
+                        if hasattr(p, 'tool_name'):
+                            tool_call_list.append(str(p))
+            if tool_call_list:
+                tool_calls = tool_call_list
     except Exception as e:
         response_text = f"I apologize, but I encountered an error: {str(e)}"
         tool_calls = None
@@ -127,7 +137,7 @@ async def chat(
 
     return ChatResponse(
         response=response_text,
-        session_id=session_id,
+        session_id=str(session_uuid),
         tool_calls=tool_calls if tool_calls else None,
     )
 
@@ -139,9 +149,14 @@ async def get_history(
     db: AsyncSession = Depends(get_db),
 ):
     """Get chat history for a session."""
+    try:
+        session_uuid = UUID(session_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid session ID format")
+
     result = await db.execute(
         select(ChatSession)
-        .where(ChatSession.session_id == session_id)
+        .where(ChatSession.session_id == session_uuid)
         .where(ChatSession.agent_slug == agent_slug)
     )
     chat_session = result.scalar_one_or_none()

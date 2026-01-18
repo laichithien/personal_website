@@ -145,7 +145,7 @@ ON CONFLICT DO NOTHING;
 -- ===========================================
 
 INSERT INTO knowledge_documents (title, content, source) VALUES
-    ('About Thiện', 'Thiện is an AI Engineer with experience in building intelligent systems, data pipelines, and full-stack applications. Currently working at Vexere, focusing on AI/ML systems and data engineering.', 'cv'),
+    ('About Thiện', 'Thiện (Lai Chi Thien) is an AI Engineer with experience in building intelligent systems, data pipelines, and full-stack applications. Currently working at Vexere, focusing on AI/ML systems and data engineering. Contact: contact@yourdomain.com, GitHub: github.com/laichithien, LinkedIn: linkedin.com/in/chi-thien-lai', 'cv'),
     ('Technical Skills', 'Languages: Python, TypeScript, SQL. Frameworks: FastAPI, Next.js, React. AI/ML: Pydantic-AI, LangChain, RAG systems. Data: PySpark, PostgreSQL, pgvector. DevOps: Docker, Kubernetes, Terraform.', 'cv'),
     ('Homelab Project', 'Self-hosted infrastructure running on home servers with Kubernetes orchestration. Services include media streaming, home automation, development environments, and AI experimentation.', 'project')
 ON CONFLICT DO NOTHING;
