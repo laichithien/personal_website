@@ -25,10 +25,11 @@ services:
       retries: 5
 
   api:
+    image: transparent-core-api:prod
     build:
       context: ./apps/ai-service
       dockerfile: Dockerfile
-      target: development
+      target: production
     container_name: tc-api
     restart: unless-stopped
     environment:
@@ -39,9 +40,7 @@ services:
       ENVIRONMENT: production
       DEBUG: "false"
       CORS_ORIGINS_STR: ${CORS_ORIGINS_STR:-https://yourdomain.com,https://www.yourdomain.com}
-    volumes:
-      - ./apps/ai-service:/app
-      - /app/.venv
+    # No volumes - use the built image
     ports:
       - "3334:8000"
     depends_on:
@@ -49,16 +48,19 @@ services:
         condition: service_healthy
 
   web:
+    image: transparent-core-web:prod
     build:
       context: ./apps/web
       dockerfile: Dockerfile
       target: runner  # Production build
+      args:
+        # NEXT_PUBLIC_* vars are embedded at build time
+        NEXT_PUBLIC_API_URL: https://api.yourdomain.com
+        NEXT_PUBLIC_SITE_URL: https://yourdomain.com
     container_name: tc-web
     restart: unless-stopped
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_API_URL: https://api.yourdomain.com
-      NEXT_PUBLIC_SITE_URL: https://yourdomain.com
     # No volumes - use the built image
     ports:
       - "3333:3000"

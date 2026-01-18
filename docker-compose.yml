@@ -43,6 +43,7 @@ services:
   # FastAPI Backend (AI Service)
   # ===========================================
   api:
+    image: transparent-core-api:dev
     build:
       context: ./apps/ai-service
       dockerfile: Dockerfile
@@ -76,6 +77,7 @@ services:
   # Next.js Frontend
   # ===========================================
   web:
+    image: transparent-core-web:dev
     build:
       context: ./apps/web
       dockerfile: Dockerfile
