@@ -36,6 +36,9 @@ class Settings(BaseSettings):
     jwt_access_token_expire_minutes: int = 15
     jwt_refresh_token_expire_days: int = 7
 
+    # Cookie Settings (for cross-subdomain auth)
+    cookie_domain: str = ""  # Set to ".yourdomain.com" in production for subdomain sharing
+
     # File Upload
     upload_dir: str = "./uploads"
     max_upload_size_mb: int = 10

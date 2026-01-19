@@ -54,6 +54,7 @@ async def login(
 
     # Set cookies
     is_production = not settings.debug
+    cookie_domain = settings.cookie_domain if settings.cookie_domain else None
     response.set_cookie(
         key="access_token",
         value=access_token,
@@ -61,6 +62,7 @@ async def login(
         secure=is_production,
         samesite="lax",
         max_age=settings.jwt_access_token_expire_minutes * 60,
+        domain=cookie_domain,
     )
     response.set_cookie(
         key="refresh_token",
@@ -69,6 +71,7 @@ async def login(
         secure=is_production,
         samesite="lax",
         max_age=settings.jwt_refresh_token_expire_days * 24 * 60 * 60,
+        domain=cookie_domain,
     )
 
     return LoginResponse(success=True, message="Login successful")
@@ -81,8 +84,9 @@ async def logout(response: Response):
 
     Clears authentication cookies.
     """
-    response.delete_cookie(key="access_token")
-    response.delete_cookie(key="refresh_token")
+    cookie_domain = settings.cookie_domain if settings.cookie_domain else None
+    response.delete_cookie(key="access_token", domain=cookie_domain)
+    response.delete_cookie(key="refresh_token", domain=cookie_domain)
     return LoginResponse(success=True, message="Logout successful")
 
 
@@ -135,6 +139,7 @@ async def refresh_token(
 
     # Set new access token cookie
     is_production = not settings.debug
+    cookie_domain = settings.cookie_domain if settings.cookie_domain else None
     response.set_cookie(
         key="access_token",
         value=new_access_token,
@@ -142,6 +147,7 @@ async def refresh_token(
         secure=is_production,
         samesite="lax",
         max_age=settings.jwt_access_token_expire_minutes * 60,
+        domain=cookie_domain,
     )
 
     return LoginResponse(success=True, message="Token refreshed")

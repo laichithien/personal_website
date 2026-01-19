@@ -40,6 +40,7 @@ services:
       ENVIRONMENT: production
       DEBUG: "false"
       CORS_ORIGINS_STR: ${CORS_ORIGINS_STR:-https://yourdomain.com,https://www.yourdomain.com}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-.yourdomain.com}
     # No volumes - use the built image
     ports:
       - "3334:8000"
