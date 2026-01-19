@@ -2,19 +2,19 @@
 # The Transparent Core - Docker Compose
 # ===========================================
 #
-# Usage (manual start only - NO auto-start on boot):
+# DEVELOPMENT environment - can run alongside production
+#
+# Usage:
 #   docker compose up -d          # Start all services
-#   docker compose up -d web      # Start frontend only
-#   docker compose up -d api      # Start backend only
 #   docker compose down           # Stop all services
 #   docker compose logs -f        # View logs
 #
-# Services:
-#   - web:      Next.js frontend (port 3333)
-#   - api:      FastAPI backend (port 3334)
-#   - postgres: PostgreSQL database (port 5432)
+# Ports (different from prod to allow simultaneous running):
+#   - web:      localhost:3343
+#   - api:      localhost:3344
+#   - postgres: localhost:5452
 
-name: transparent-core
+name: transparent-core-dev
 
 services:
   # ===========================================
@@ -22,7 +22,7 @@ services:
   # ===========================================
   postgres:
     image: pgvector/pgvector:pg16
-    container_name: tc-postgres
+    container_name: tc-postgres-dev
     restart: "no"  # Manual start only - no auto-restart
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
@@ -32,7 +32,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "5442:5432"
+      - "5452:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-ai_agent_db}"]
       interval: 10s
@@ -48,7 +48,7 @@ services:
       context: ./apps/ai-service
       dockerfile: Dockerfile
       target: development
-    container_name: tc-api
+    container_name: tc-api-dev
     restart: "no"  # Manual start only
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-ai_agent_db}
@@ -57,12 +57,12 @@ services:
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://openrouter.ai/api/v1}
       ENVIRONMENT: ${ENVIRONMENT:-development}
       DEBUG: ${DEBUG:-true}
-      CORS_ORIGINS_STR: ${CORS_ORIGINS_STR:-http://localhost:3000,http://localhost:3333}
+      CORS_ORIGINS_STR: ${CORS_ORIGINS_STR:-http://localhost:3000,http://localhost:3343}
     volumes:
       - ./apps/ai-service:/app
       - /app/.venv  # Exclude venv from volume mount
     ports:
-      - "3334:8000"
+      - "3344:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -82,18 +82,18 @@ services:
       context: ./apps/web
       dockerfile: Dockerfile
       target: development
-    container_name: tc-web
+    container_name: tc-web-dev
     restart: "no"  # Manual start only
     environment:
-      # For local dev use localhost, for tunnel use: https://api.yourdomain.com
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3334}
-      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3333}
+      # Dev uses different port (3344) than prod (3334)
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3344}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3343}
     volumes:
       - ./apps/web:/app
       - /app/node_modules  # Exclude node_modules from volume mount
       - /app/.next         # Exclude .next from volume mount
     ports:
-      - "3333:3000"
+      - "3343:3000"
     depends_on:
       - api
     healthcheck:
@@ -115,7 +115,7 @@ services:
   # 6. Run: docker compose up -d cloudflared
   cloudflared:
     image: cloudflare/cloudflared:latest
-    container_name: tc-cloudflared
+    container_name: tc-cloudflared-dev
     restart: "no"  # Manual start only
     command: tunnel run
     volumes:
@@ -129,4 +129,4 @@ services:
 
 volumes:
   postgres_data:
-    name: tc-postgres-data
+    name: tc-postgres-data-dev

@@ -9,7 +9,7 @@ def get_cv_info() -> str:
         Formatted CV information
     """
     return """
-    Name: Lai Chi Thiện (Thiện)
+    Name: Lại Chí Thiện (Thiện)
     Role: AI Engineer @ Vexere
     Email: contact@yourdomain.com
     GitHub: github.com/laichithien
