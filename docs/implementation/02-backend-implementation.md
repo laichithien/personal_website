@@ -18,7 +18,7 @@ apps/ai-service/
 │   ├── database/
 │   │   ├── __init__.py
 │   │   ├── connection.py       # Database connection
-│   │   └── models.py           # SQLModel schemas
+│   │   └── models.py           # SQLModel schemas (includes AdminUser)
 │   │
 │   ├── agent/
 │   │   ├── __init__.py
@@ -31,14 +31,26 @@ apps/ai-service/
 │   │
 │   ├── api/
 │   │   ├── __init__.py
-│   │   ├── schemas.py          # Pydantic request/response schemas
+│   │   ├── deps/
+│   │   │   └── auth.py         # Auth dependency (JWT validation)
+│   │   ├── schemas/
+│   │   │   ├── chat.py         # Chat request/response schemas
+│   │   │   └── admin.py        # Admin schemas
 │   │   └── routes/
 │   │       ├── __init__.py
 │   │       ├── chat.py         # Chat endpoints
-│   │       └── admin.py        # Admin endpoints (optional)
+│   │       └── admin/          # Admin endpoints
+│   │           ├── __init__.py
+│   │           ├── auth.py     # Login/logout/refresh/me
+│   │           ├── agents.py   # Agent CRUD
+│   │           ├── tools.py    # Tool CRUD
+│   │           ├── knowledge.py# Knowledge CRUD + file upload
+│   │           ├── sessions.py # Session management
+│   │           └── dashboard.py# Stats endpoint
 │   │
 │   └── services/
 │       ├── __init__.py
+│       ├── auth.py             # JWT + bcrypt authentication
 │       └── knowledge.py        # RAG/Knowledge management
 │
 ├── alembic/                    # Database migrations
@@ -82,10 +94,12 @@ class Settings(BaseSettings):
     # Database
     database_url: str = "postgresql://localhost:5432/ai_agent_db"
 
-    # AI
-    gemini_api_key: str = ""
-    default_model_provider: str = "google-gla"
-    default_model_name: str = "gemini-1.5-flash"
+    # AI (OpenRouter)
+    openrouter_api_key: str = ""
+    openai_api_key: str = ""  # Same as OpenRouter key (for Pydantic-AI compatibility)
+    openai_base_url: str = "https://openrouter.ai/api/v1"
+    default_model: str = "xiaomi/mimo-v2-flash:free"
+    default_temperature: float = 0.7
 
     # Application
     debug: bool = False
@@ -203,8 +217,7 @@ class AgentConfig(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     slug: str = Field(unique=True, index=True)  # e.g., "portfolio-assistant"
     name: str
-    model_provider: str = "google-gla"
-    model_name: str = "gemini-1.5-flash"
+    model: str = "xiaomi/mimo-v2-flash:free"  # OpenRouter model format
     system_prompt: str
     temperature: float = 0.7
     is_active: bool = True
@@ -308,7 +321,7 @@ class KnowledgeChunk(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     document_id: int = Field(foreign_key="knowledge_documents.id", index=True)
     content: str
-    embedding: list[float] = Field(sa_column=Column(Vector(768)))  # Gemini embedding size
+    embedding: list[float] = Field(sa_column=Column(Vector(768)))  # Embedding dimension
     chunk_index: int
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -744,8 +757,7 @@ class AgentConfigCreate(BaseModel):
     slug: str
     name: str
     system_prompt: str
-    model_provider: str = "google-gla"
-    model_name: str = "gemini-1.5-flash"
+    model: str = "xiaomi/mimo-v2-flash:free"  # OpenRouter model format
     temperature: float = 0.7
 
 
@@ -1088,8 +1100,7 @@ Knowledge domains:
 - Game development
 - Music (guitar, piano)
 """,
-        model_provider="google-gla",
-        model_name="gemini-1.5-flash",
+        model="xiaomi/mimo-v2-flash:free",  # OpenRouter model
         temperature=0.7,
     )
     session.add(agent)
@@ -1154,7 +1165,16 @@ pgvector>=0.2.4
 
 # AI/Agent
 pydantic-ai>=0.0.10
-google-generativeai>=0.3.2  # For Gemini models
+openai>=1.0.0  # For OpenRouter API compatibility
+
+# Authentication (Admin Panel)
+pyjwt>=2.8.0
+bcrypt>=4.1.0
+
+# File Upload (Knowledge Documents)
+aiofiles>=23.0.0
+pypdf>=4.0.0
+python-multipart>=0.0.6
 
 # Utilities
 pydantic-settings>=2.1.0

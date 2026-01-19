@@ -1,9 +1,14 @@
+import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.config import settings
-from src.database.connection import init_db
-from src.api.routes import chat
+from src.database.connection import init_db, async_session_maker
+from src.api.routes import chat, portfolio
+from src.api.routes.admin import admin_router
+from src.services.auth import AuthService
+
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
@@ -11,6 +16,15 @@ async def lifespan(app: FastAPI):
     """Application lifespan events."""
     # Startup
     await init_db()
+
+    # Initialize default admin user if not exists
+    async with async_session_maker() as db:
+        admin = await AuthService.init_default_admin(db)
+        if admin:
+            logger.info(f"Created default admin user: {admin.username}")
+        else:
+            logger.info("Admin user already exists or not configured")
+
     yield
     # Shutdown
     pass
@@ -34,6 +48,8 @@ app.add_middleware(
 
 # Include routers
 app.include_router(chat.router)
+app.include_router(portfolio.router)
+app.include_router(admin_router)
 
 
 @app.get("/health")

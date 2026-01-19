@@ -1,6 +1,6 @@
 # The Transparent Core
 
-A modern portfolio website with AI-powered chat assistant, featuring a Liquid Glass design system.
+A modern portfolio website with AI-powered chat assistant, featuring a Liquid Glass design system and a full-featured admin panel.
 
 ## Tech Stack
 
@@ -17,6 +17,8 @@ A modern portfolio website with AI-powered chat assistant, featuring a Liquid Gl
 - Pydantic-AI
 - SQLModel + PostgreSQL
 - pgvector (RAG support)
+- JWT Authentication (httpOnly cookies)
+- bcrypt password hashing
 
 **AI**
 - OpenRouter API
@@ -74,6 +76,7 @@ docker compose logs -f
 **Production Public URLs:**
 - Frontend: https://yourdomain.com
 - API: https://api.yourdomain.com
+- Admin Panel: https://yourdomain.com/admin
 
 ## Docker Commands
 
@@ -182,9 +185,19 @@ npm run dev
 ├── apps/
 │   ├── web/                    # Next.js frontend
 │   │   ├── src/
-│   │   │   ├── app/            # App router pages
+│   │   │   ├── app/
+│   │   │   │   ├── admin/      # Admin panel pages
+│   │   │   │   │   ├── login/
+│   │   │   │   │   ├── dashboard/
+│   │   │   │   │   ├── agents/
+│   │   │   │   │   ├── tools/
+│   │   │   │   │   ├── knowledge/
+│   │   │   │   │   ├── sessions/
+│   │   │   │   │   └── settings/
+│   │   │   │   └── ...         # Public pages
 │   │   │   ├── components/
 │   │   │   │   ├── ui/         # Base UI components
+│   │   │   │   ├── admin/      # Admin-specific components
 │   │   │   │   ├── features/   # Feature components
 │   │   │   │   └── shared/     # Shared components
 │   │   │   ├── hooks/          # Custom hooks
@@ -194,10 +207,21 @@ npm run dev
 │   │
 │   └── ai-service/             # FastAPI backend
 │       ├── src/
-│       │   ├── api/            # API routes
+│       │   ├── api/
+│       │   │   ├── routes/
+│       │   │   │   ├── admin/  # Admin API endpoints
+│       │   │   │   │   ├── auth.py
+│       │   │   │   │   ├── agents.py
+│       │   │   │   │   ├── tools.py
+│       │   │   │   │   ├── knowledge.py
+│       │   │   │   │   ├── sessions.py
+│       │   │   │   │   └── dashboard.py
+│       │   │   │   └── chat.py
+│       │   │   ├── deps/       # Dependencies (auth)
+│       │   │   └── schemas/    # Pydantic schemas
 │       │   ├── agent/          # AI agent system
 │       │   ├── database/       # Models & connection
-│       │   └── services/       # Business logic
+│       │   └── services/       # Business logic (auth)
 │       ├── tests/
 │       └── Dockerfile
 │
@@ -226,7 +250,19 @@ npm run dev
 | `NEXT_PUBLIC_API_URL` | Backend API URL | `http://localhost:3344` | `https://api.yourdomain.com` |
 | `NEXT_PUBLIC_SITE_URL` | Frontend URL | `http://localhost:3343` | `https://yourdomain.com` |
 
+**Admin Panel Variables:**
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `ADMIN_USERNAME` | Default admin username | `admin` |
+| `DEFAULT_ADMIN_PASSWORD` | Initial admin password (used on first startup) | `admin123` |
+| `JWT_SECRET_KEY` | Secret key for JWT tokens | (generated) |
+| `JWT_ACCESS_TOKEN_EXPIRE_MINUTES` | Access token expiry | `15` |
+| `JWT_REFRESH_TOKEN_EXPIRE_DAYS` | Refresh token expiry | `7` |
+
 ## API Endpoints
+
+### Public Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -234,6 +270,60 @@ npm run dev
 | `GET` | `/docs` | Swagger documentation |
 | `POST` | `/api/chat/{agent_slug}` | Send message to AI agent |
 | `GET` | `/api/chat/{agent_slug}/history/{session_id}` | Get chat history |
+
+### Admin Endpoints (Authentication Required)
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/admin/auth/login` | Admin login |
+| `POST` | `/api/admin/auth/logout` | Admin logout |
+| `POST` | `/api/admin/auth/refresh` | Refresh access token |
+| `GET` | `/api/admin/auth/me` | Get current admin info |
+| `POST` | `/api/admin/auth/change-password` | Change admin password |
+| `GET/POST` | `/api/admin/agents` | List/create agents |
+| `GET/PUT/DELETE` | `/api/admin/agents/{id}` | Agent CRUD |
+| `GET/POST` | `/api/admin/tools` | List/create tools |
+| `GET/PUT/DELETE` | `/api/admin/tools/{id}` | Tool CRUD |
+| `GET/POST` | `/api/admin/knowledge` | List/create documents |
+| `POST` | `/api/admin/knowledge/upload` | Upload document file |
+| `GET/PUT/DELETE` | `/api/admin/knowledge/{id}` | Document CRUD |
+| `GET` | `/api/admin/sessions` | List chat sessions |
+| `GET/DELETE` | `/api/admin/sessions/{id}` | Session detail/delete |
+| `GET` | `/api/admin/dashboard/stats` | Dashboard statistics |
+
+## Admin Panel
+
+The admin panel provides a web interface for managing AI agents, tools, knowledge documents, and chat sessions.
+
+### Features
+
+- **Dashboard**: Overview of system statistics and recent activity
+- **Agents**: Configure AI agent settings (model, temperature, system prompts)
+- **Tools**: Manage available tools for agents
+- **Knowledge**: Upload and manage RAG documents (PDF, TXT, MD, JSON, CSV)
+- **Sessions**: View and manage chat sessions
+- **Settings**: Change admin password
+
+### Authentication
+
+- JWT-based authentication with httpOnly cookies
+- Access tokens expire in 15 minutes (configurable)
+- Refresh tokens expire in 7 days (configurable)
+- Passwords hashed with bcrypt
+- Supports both cookie and Bearer token authentication
+
+### Default Credentials
+
+On first startup, a default admin user is created:
+- **Username**: `admin` (or value of `ADMIN_USERNAME`)
+- **Password**: `admin123` (or value of `DEFAULT_ADMIN_PASSWORD`)
+
+**Important**: Change the default password immediately after first login via Settings page.
+
+### Access
+
+- Development: http://localhost:3343/admin
+- Production: https://yourdomain.com/admin
 
 ## Cloudflare Tunnel
 

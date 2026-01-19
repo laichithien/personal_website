@@ -10,9 +10,13 @@
 
 ### 1.1. Authentication
 
-Currently, the API is public (no authentication required). Future versions may add:
-- API key authentication for rate limiting
-- JWT for admin endpoints
+**Public Endpoints**: No authentication required for chat endpoints.
+
+**Admin Endpoints**: JWT-based authentication with httpOnly cookies.
+- Access tokens expire in 15 minutes (configurable via `JWT_ACCESS_TOKEN_EXPIRE_MINUTES`)
+- Refresh tokens expire in 7 days (configurable via `JWT_REFRESH_TOKEN_EXPIRE_DAYS`)
+- Passwords hashed with bcrypt
+- Supports both cookie and Bearer token authentication
 
 ### 1.2. Response Format
 
@@ -202,9 +206,79 @@ GET /
 
 ---
 
-## 4. Admin Endpoints (Optional)
+## 4. Admin Endpoints
 
-These endpoints require authentication and are for managing agents/tools.
+These endpoints require JWT authentication via httpOnly cookies and are for managing agents, tools, knowledge documents, and sessions.
+
+### 4.0. Authentication Endpoints
+
+#### Login
+
+```
+POST /api/admin/auth/login
+```
+
+**Request Body:**
+```json
+{
+  "username": "admin",
+  "password": "your-password"
+}
+```
+
+**Response:** Sets httpOnly cookies (`access_token`, `refresh_token`) and returns:
+```json
+{
+  "message": "Login successful",
+  "username": "admin"
+}
+```
+
+#### Logout
+
+```
+POST /api/admin/auth/logout
+```
+
+**Response:** Clears authentication cookies.
+
+#### Refresh Token
+
+```
+POST /api/admin/auth/refresh
+```
+
+**Response:** Issues new access token using refresh token from cookies.
+
+#### Get Current User
+
+```
+GET /api/admin/auth/me
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "username": "admin"
+}
+```
+
+#### Change Password
+
+```
+POST /api/admin/auth/change-password
+```
+
+**Request Body:**
+```json
+{
+  "current_password": "old-password",
+  "new_password": "new-password"
+}
+```
+
+---
 
 ### 4.1. List Agents
 
@@ -242,8 +316,7 @@ POST /api/admin/agents
   "slug": "blog-assistant",
   "name": "Blog Assistant",
   "system_prompt": "You are a helpful blog writing assistant...",
-  "model_provider": "google-gla",
-  "model_name": "gemini-1.5-flash",
+  "model": "xiaomi/mimo-v2-flash:free",
   "temperature": 0.7
 }
 ```
@@ -330,6 +403,178 @@ POST /api/admin/agents/{agent_id}/tools/{tool_id}
 
 ```
 DELETE /api/admin/agents/{agent_id}/tools/{tool_id}
+```
+
+---
+
+### 4.8. Knowledge Document Management
+
+#### List Documents
+
+```
+GET /api/admin/knowledge
+```
+
+**Response:**
+```json
+{
+  "documents": [
+    {
+      "id": 1,
+      "title": "CV Information",
+      "source": "cv",
+      "chunk_count": 5,
+      "created_at": "2024-01-15T10:00:00Z"
+    }
+  ]
+}
+```
+
+#### Create Document
+
+```
+POST /api/admin/knowledge
+```
+
+**Request Body:**
+```json
+{
+  "title": "Project Documentation",
+  "content": "Full text content here...",
+  "source": "manual"
+}
+```
+
+#### Upload Document File
+
+```
+POST /api/admin/knowledge/upload
+```
+
+**Request:** Multipart form data with file (PDF, TXT, MD, JSON, CSV)
+- `file`: The document file
+- `title`: Optional title (defaults to filename)
+- `source`: Optional source type
+
+#### Update Document
+
+```
+PUT /api/admin/knowledge/{id}
+```
+
+#### Delete Document
+
+```
+DELETE /api/admin/knowledge/{id}
+```
+
+#### Reindex Document
+
+```
+POST /api/admin/knowledge/{id}/reindex
+```
+
+---
+
+### 4.9. Session Management
+
+#### List Sessions
+
+```
+GET /api/admin/sessions?page=1&per_page=20
+```
+
+**Response:**
+```json
+{
+  "items": [
+    {
+      "id": 1,
+      "session_id": "uuid-string",
+      "agent_slug": "portfolio-assistant",
+      "message_count": 10,
+      "created_at": "2024-01-15T10:00:00Z",
+      "last_activity": "2024-01-15T10:30:00Z"
+    }
+  ],
+  "total": 100,
+  "page": 1,
+  "per_page": 20,
+  "total_pages": 5
+}
+```
+
+#### Get Session Details
+
+```
+GET /api/admin/sessions/{id}
+```
+
+**Response:** Full session with all messages.
+
+#### Delete Session
+
+```
+DELETE /api/admin/sessions/{id}
+```
+
+#### Bulk Delete Sessions
+
+```
+POST /api/admin/sessions/bulk-delete
+```
+
+**Request Body:**
+```json
+{
+  "ids": [1, 2, 3]
+}
+```
+
+---
+
+### 4.10. Dashboard Statistics
+
+#### Get Stats
+
+```
+GET /api/admin/dashboard/stats
+```
+
+**Response:**
+```json
+{
+  "total_agents": 3,
+  "active_agents": 2,
+  "total_tools": 5,
+  "total_documents": 10,
+  "total_sessions": 150,
+  "total_messages": 1000,
+  "sessions_today": 25,
+  "messages_today": 150
+}
+```
+
+#### Get Recent Activity
+
+```
+GET /api/admin/dashboard/recent-activity
+```
+
+**Response:**
+```json
+[
+  {
+    "type": "session",
+    "description": "New chat session started with portfolio-assistant",
+    "timestamp": "2024-01-15T10:30:00Z"
+  },
+  {
+    "type": "message",
+    "description": "New user message: Hello, can you help...",
+    "timestamp": "2024-01-15T10:29:00Z"
+  }
+]
 ```
 
 ---
@@ -565,6 +810,7 @@ http POST localhost:3334/api/chat/portfolio-assistant \
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 0.2.0 | 2025-01 | Added admin panel with JWT authentication, knowledge management, sessions, dashboard |
 | 0.1.0 | 2024-01 | Initial API design |
 
 ---

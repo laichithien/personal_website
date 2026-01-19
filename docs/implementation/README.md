@@ -232,11 +232,14 @@ This project targets **production excellence**, not just MVP functionality:
    - [ ] Visual regression baseline
    - [ ] Load testing
 
-### Phase 5: Enhancement
-**Focus: Advanced features**
+### Phase 5: Admin & Enhancement
+**Focus: Management & advanced features**
 
+- [x] Admin panel for agent configuration (JWT auth, CRUD operations)
+- [x] Knowledge document management with file upload
+- [x] Session monitoring and management
+- [x] Dashboard with statistics
 - [ ] Real-time Homelab status widget
-- [ ] Admin panel for agent configuration
 - [ ] Blog system with MDX
 - [ ] Analytics integration
 - [ ] Advanced RAG with knowledge base
@@ -288,7 +291,8 @@ cd ../ai-service && pytest
 | **Animation** | Framer Motion | Liquid glass effects & transitions |
 | **State** | Zustand + React Query | Client & server state management |
 | **Backend** | FastAPI | High-performance async Python API |
-| **AI** | Pydantic-AI + Gemini | Agent framework + LLM |
+| **AI** | Pydantic-AI + OpenRouter | Agent framework + LLM |
+| **Auth** | JWT + bcrypt | Admin panel authentication |
 | **Database** | PostgreSQL + pgvector | Relational data + vector search |
 | **Testing** | Vitest + Playwright + Pytest | Full-stack testing |
 | **Container** | Docker Compose | Service orchestration |

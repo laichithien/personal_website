@@ -7,6 +7,24 @@ from sqlalchemy import Column, JSON
 
 
 # ==========================================
+# Admin User Table
+# ==========================================
+
+class AdminUser(SQLModel, table=True):
+    """Admin user for authentication."""
+
+    __tablename__ = "admin_users"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    username: str = Field(unique=True, index=True)
+    password_hash: str  # bcrypt hashed password
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    last_login: Optional[datetime] = None
+
+
+# ==========================================
 # Agent Configuration Tables
 # ==========================================
 
@@ -129,3 +147,115 @@ class KnowledgeChunk(SQLModel, table=True):
 
     # Relationships
     document: KnowledgeDocument = Relationship(back_populates="chunks")
+
+
+# ==========================================
+# Portfolio Content Tables
+# ==========================================
+
+class PortfolioSetting(SQLModel, table=True):
+    """Singleton settings for portfolio content (hero, about, education, social, lifestyle)."""
+
+    __tablename__ = "portfolio_settings"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    key: str = Field(unique=True, index=True)  # "hero", "about", "education", "social", "lifestyle"
+    value: dict[str, Any] = Field(sa_column=Column(JSON))
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class PortfolioExperience(SQLModel, table=True):
+    """Work experience entries."""
+
+    __tablename__ = "portfolio_experiences"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    company: str
+    role: str
+    period: str  # e.g., "Jun 2025 - Present"
+    highlights: list[str] = Field(default=[], sa_column=Column(JSON))
+    display_order: int = Field(default=0)
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class PortfolioTechStack(SQLModel, table=True):
+    """Tech stack items."""
+
+    __tablename__ = "portfolio_tech_stack"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    icon: str  # Icon identifier
+    category: str  # "language", "ai", "backend", "frontend", "database", "devops"
+    display_order: int = Field(default=0)
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class PortfolioProject(SQLModel, table=True):
+    """Portfolio project entries."""
+
+    __tablename__ = "portfolio_projects"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str
+    description: str
+    tags: list[str] = Field(default=[], sa_column=Column(JSON))
+    image: Optional[str] = None  # Optional image URL
+    link: Optional[str] = None  # Optional project URL
+    github: Optional[str] = None  # Optional GitHub URL
+    is_featured: bool = False
+    display_order: int = Field(default=0)
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class PortfolioPublication(SQLModel, table=True):
+    """Academic publications."""
+
+    __tablename__ = "portfolio_publications"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str
+    venue: str  # e.g., "IEEE RIVF 2022"
+    doi: Optional[str] = None
+    year: int
+    display_order: int = Field(default=0)
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class PortfolioAchievement(SQLModel, table=True):
+    """Achievements and awards."""
+
+    __tablename__ = "portfolio_achievements"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str
+    event: str
+    organization: str
+    year: int
+    display_order: int = Field(default=0)
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class PortfolioCourse(SQLModel, table=True):
+    """Professional courses and certifications."""
+
+    __tablename__ = "portfolio_courses"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str
+    year: int
+    focus: list[str] = Field(default=[], sa_column=Column(JSON))
+    display_order: int = Field(default=0)
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)

@@ -1,3 +1,3 @@
-from src.api.routes import chat
+from src.api.routes import chat, portfolio
 
-__all__ = ["chat"]
+__all__ = ["chat", "portfolio"]
