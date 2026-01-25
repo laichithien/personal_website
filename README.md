@@ -1,6 +1,6 @@
-# The Transparent Core
+# Personal Website
 
-A modern portfolio website with AI-powered chat assistant, featuring a Liquid Glass design system and a full-featured admin panel.
+A modern portfolio website with AI-powered chat assistant and full-featured admin panel. Features a clean, glass-morphism inspired design aesthetic.
 
 ## Tech Stack
 
@@ -20,9 +20,12 @@ A modern portfolio website with AI-powered chat assistant, featuring a Liquid Gl
 - JWT Authentication (httpOnly cookies)
 - bcrypt password hashing
 
-**AI**
-- OpenRouter API
+**AI & Features**
+- OpenRouter API integration
 - Model: `xiaomi/mimo-v2-flash:free`
+- RAG (Retrieval Augmented Generation) support
+- Interactive chat assistant
+- Admin panel for content management
 
 ## Prerequisites
 
@@ -291,18 +294,23 @@ npm run dev
 | `GET/DELETE` | `/api/admin/sessions/{id}` | Session detail/delete |
 | `GET` | `/api/admin/dashboard/stats` | Dashboard statistics |
 
-## Admin Panel
+## Core Features
 
+### AI-Powered Portfolio
+- **Interactive Chat Assistant**: Visitors can chat with an AI that knows about your background and projects
+- **Intelligent Responses**: AI can answer questions about your experience, skills, and work
+- **Contact Collection**: AI can gather visitor contact information and schedule meetings
+
+### Admin Panel
 The admin panel provides a web interface for managing AI agents, tools, knowledge documents, and chat sessions.
 
-### Features
-
+**Key Features:**
 - **Dashboard**: Overview of system statistics and recent activity
 - **Agents**: Configure AI agent settings (model, temperature, system prompts)
 - **Tools**: Manage available tools for agents
 - **Knowledge**: Upload and manage RAG documents (PDF, TXT, MD, JSON, CSV)
 - **Sessions**: View and manage chat sessions
-- **Settings**: Change admin password
+- **Settings**: System configuration and admin controls
 
 ### Authentication
 
