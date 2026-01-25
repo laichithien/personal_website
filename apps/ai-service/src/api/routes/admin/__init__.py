@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from src.api.routes.admin import auth, agents, tools, knowledge, sessions, dashboard, portfolio
+from src.api.routes.admin import auth, agents, tools, knowledge, sessions, dashboard, portfolio, settings
 
 # Create main admin router
 admin_router = APIRouter(prefix="/api/admin", tags=["admin"])
@@ -15,5 +15,6 @@ admin_router.include_router(knowledge.router)
 admin_router.include_router(sessions.router)
 admin_router.include_router(dashboard.router)
 admin_router.include_router(portfolio.router)
+admin_router.include_router(settings.router)
 
 __all__ = ["admin_router"]

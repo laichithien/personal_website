@@ -254,3 +254,69 @@ class PaginatedResponse(BaseModel):
     page: int
     per_page: int
     total_pages: int
+
+
+# ==========================================
+# System Settings Schemas
+# ==========================================
+
+
+class SystemSettingCreate(BaseModel):
+    """Create system setting."""
+
+    key: str = Field(..., min_length=1, max_length=100, pattern=r"^[a-z0-9_]+$")
+    value: str = Field(..., min_length=0)
+    description: str = ""
+    is_sensitive: bool = False
+
+
+class SystemSettingUpdate(BaseModel):
+    """Update system setting."""
+
+    value: Optional[str] = None
+    description: Optional[str] = None
+    is_sensitive: Optional[bool] = None
+
+
+class SystemSettingResponse(BaseModel):
+    """System setting response."""
+
+    id: int
+    key: str
+    value: str  # Will be masked if is_sensitive=True
+    description: str
+    is_sensitive: bool
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+# ==========================================
+# Contact Lead Schemas
+# ==========================================
+
+
+class ContactLeadResponse(BaseModel):
+    """Contact lead response."""
+
+    id: int
+    name: str
+    email: Optional[str]
+    company: Optional[str]
+    phone: Optional[str]
+    purpose: Optional[str]
+    message: Optional[str]
+    session_id: Optional[str]
+    is_contacted: bool
+    notes: Optional[str]
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class ContactLeadUpdate(BaseModel):
+    """Update contact lead."""
+
+    is_contacted: Optional[bool] = None
+    notes: Optional[str] = None

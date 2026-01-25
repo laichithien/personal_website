@@ -259,3 +259,43 @@ class PortfolioCourse(SQLModel, table=True):
     is_active: bool = True
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# ==========================================
+# System Settings Table
+# ==========================================
+
+class SystemSetting(SQLModel, table=True):
+    """Admin-configurable system settings for tools and integrations."""
+
+    __tablename__ = "system_settings"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    key: str = Field(unique=True, index=True)  # e.g., "github_token", "calendly_link"
+    value: str  # Encrypted for sensitive values
+    description: str = ""
+    is_sensitive: bool = False  # If true, value is encrypted/masked in UI
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# ==========================================
+# Contact & Lead Tables
+# ==========================================
+
+class ContactLead(SQLModel, table=True):
+    """Visitor contact information collected by the AI agent."""
+
+    __tablename__ = "contact_leads"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    email: Optional[str] = None
+    company: Optional[str] = None
+    phone: Optional[str] = None
+    purpose: Optional[str] = None  # "hiring", "collaboration", "project", "other"
+    message: Optional[str] = None
+    session_id: Optional[str] = None  # Link to chat session
+    is_contacted: bool = False  # Has Thiện followed up?
+    notes: Optional[str] = None  # Admin notes
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)

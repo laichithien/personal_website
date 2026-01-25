@@ -8,24 +8,30 @@ When adding a new tool:
 """
 
 from typing import Callable, Any
-from src.agent.tools import search, info
+from src.agent.tools import portfolio, actions
 
 # Type alias for tool functions
 ToolFunction = Callable[..., Any]
 
 # Central registry mapping tool names to implementations
 AVAILABLE_TOOLS: dict[str, ToolFunction] = {
-    # Search tools
-    "search_projects": search.search_projects,
-    "search_knowledge": search.search_knowledge,
+    # ===========================================
+    # Search Tools (Unified)
+    # ===========================================
+    "search_profile": portfolio.search_profile,
 
-    # Info retrieval tools
-    "get_cv_info": info.get_cv_info,
-    "get_contact_info": info.get_contact_info,
-    "get_tech_stack": info.get_tech_stack,
+    # ===========================================
+    # Action Tools
+    # ===========================================
+    "send_cv": actions.send_cv,
+    "save_contact": actions.save_contact,
+    "schedule_meeting": actions.schedule_meeting,
+    "fetch_github_stats": actions.fetch_github_stats,
 
-    # Utility tools
-    "calculator": info.calculator,
+    # ===========================================
+    # Utility Tools
+    # ===========================================
+    "calculator": actions.calculator,
 }
 
 
