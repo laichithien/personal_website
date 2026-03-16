@@ -1,134 +1,59 @@
-# ===========================================
-# The Transparent Core - Docker Compose
-# ===========================================
-#
-# DEVELOPMENT environment - can run alongside production
-#
-# Usage:
-#   docker compose up -d          # Start all services
-#   docker compose down           # Stop all services
-#   docker compose logs -f        # View logs
-#
-# Ports (different from prod to allow simultaneous running):
-#   - web:      localhost:3343
-#   - api:      localhost:3344
-#   - postgres: localhost:5452
-
-name: transparent-core-dev
-
+name: personal_website
 services:
-  # ===========================================
-  # PostgreSQL Database
-  # ===========================================
-  postgres:
-    image: pgvector/pgvector:pg16
-    container_name: tc-postgres-dev
-    restart: "no"  # Manual start only - no auto-restart
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-ai_agent_db}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./infrastructure/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    ports:
-      - "5452:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-ai_agent_db}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # ===========================================
-  # FastAPI Backend (AI Service)
-  # ===========================================
+  # --- Backend API ---
   api:
-    image: transparent-core-api:dev
+    image: personal-api:prod
     build:
-      context: ./apps/ai-service
-      dockerfile: Dockerfile
-      target: development
-    container_name: tc-api-dev
-    restart: "no"  # Manual start only
+      context: .
+      dockerfile: ./apps/ai-service/Dockerfile
+      target: production
+    container_name: personal_api
+    restart: unless-stopped
+    # [QUAN TRỌNG] Map thư mục upload ra ngoài để không mất dữ liệu khi update
+    volumes:
+      - ./uploads:/app/uploads
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-ai_agent_db}
+      # Database Connection (Lấy từ .env)
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      # AI Config
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://openrouter.ai/api/v1}
-      ENVIRONMENT: ${ENVIRONMENT:-development}
-      DEBUG: ${DEBUG:-true}
-      CORS_ORIGINS_STR: ${CORS_ORIGINS_STR:-http://localhost:3000,http://localhost:3343}
-    volumes:
-      - ./apps/ai-service:/app
-      - /app/.venv  # Exclude venv from volume mount
-    ports:
-      - "3344:8000"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-
-  # ===========================================
-  # Next.js Frontend
-  # ===========================================
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      DEBUG: ${DEBUG:-false}
+      # Security & CORS
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      CORS_ORIGINS_STR: ${CORS_ORIGINS_STR}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN}
+      # Admin Setup
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD}
+    networks:
+      - main-network
+  # --- Frontend Web ---
   web:
-    image: transparent-core-web:dev
+    image: personal-web:prod
     build:
-      context: ./apps/web
-      dockerfile: Dockerfile
-      target: development
-    container_name: tc-web-dev
-    restart: "no"  # Manual start only
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+      target: runner
+      # [QUAN TRỌNG] Nạp biến môi trường vào lúc BUILD IMAGE (Next.js cần cái này)
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+    container_name: personal_web
+    restart: unless-stopped
     environment:
-      # Dev uses different port (3344) than prod (3334)
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3344}
-      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3343}
-      # Internal Docker URL for server-side rendering
-      API_URL: http://api:8000
-    volumes:
-      - ./apps/web:/app
-      - /app/node_modules  # Exclude node_modules from volume mount
-      - /app/.next         # Exclude .next from volume mount
+      NODE_ENV: production
+      # Internal network URL (Web gọi API qua mạng Docker)
+      API_URL: http://personal_api:8000
     ports:
-      - "3343:3000"
+      - 3333:3000
     depends_on:
       - api
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
-  # ===========================================
-  # Cloudflare Tunnel (optional - for public access)
-  # ===========================================
-  # Setup instructions:
-  # 1. Run: docker compose run --rm cloudflared tunnel login
-  # 2. Run: docker compose run --rm cloudflared tunnel create transparent-core
-  # 3. Copy the tunnel ID to infrastructure/cloudflared/config.yml
-  # 4. Copy credentials.json to infrastructure/cloudflared/
-  # 5. Update hostnames in config.yml with your domain
-  # 6. Run: docker compose up -d cloudflared
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: tc-cloudflared-dev
-    restart: "no"  # Manual start only
-    command: tunnel run
-    volumes:
-      - ./infrastructure/cloudflared/config.yml:/etc/cloudflared/config.yml:ro
-      - ./infrastructure/cloudflared/credentials.json:/etc/cloudflared/credentials.json:ro
-    depends_on:
-      - web
-      - api
-    profiles:
-      - tunnel  # Only starts with: docker compose --profile tunnel up
-
-volumes:
-  postgres_data:
-    name: tc-postgres-data-dev
+    networks:
+      - main-network
+# Kết nối vào mạng chung của Server (Nơi có Postgres-main và Tunnel)
+networks:
+  main-network:
+    driver: bridge

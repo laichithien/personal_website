@@ -27,8 +27,8 @@ services:
   api:
     image: transparent-core-api:prod
     build:
-      context: ./apps/ai-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/ai-service/Dockerfile
       target: production
     container_name: tc-api
     restart: unless-stopped
@@ -51,13 +51,13 @@ services:
   web:
     image: transparent-core-web:prod
     build:
-      context: ./apps/web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/web/Dockerfile
       target: runner  # Production build
       args:
         # NEXT_PUBLIC_* vars are embedded at build time
-        NEXT_PUBLIC_API_URL: https://api.yourdomain.com
-        NEXT_PUBLIC_SITE_URL: https://yourdomain.com
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.yourdomain.com}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-https://yourdomain.com}
     container_name: tc-web
     restart: unless-stopped
     environment:

@@ -47,6 +47,14 @@ test-results/
 *.db
 *.sqlite3
 
+# Infrastructure Secrets
+infrastructure/cloudflared/credentials.json
+
+# Personal Assets
+docs/my_cv.tex
+photo_2026-01-19_00-24-00.jpg
+apps/web/public/images/avatar.jpg
+
 # Docker
 docker-compose.override.yml
 

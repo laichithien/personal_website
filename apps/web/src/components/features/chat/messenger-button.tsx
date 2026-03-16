@@ -20,7 +20,7 @@ export function MessengerButton() {
             exit={{ scale: 0 }}
             onClick={() => setIsOpen(true)}
             className="fixed bottom-24 md:bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-cyan-500 text-white shadow-lg shadow-cyan-500/30 flex items-center justify-center hover:bg-cyan-400 transition-colors"
-            aria-label="Open chat messenger"
+            aria-label="Open chatbox"
           >
             <MessageCircle className="w-6 h-6" />
           </motion.button>
@@ -38,7 +38,7 @@ export function MessengerButton() {
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
               className="fixed inset-0 z-40 md:hidden"
-              aria-label="Close messenger"
+              aria-label="Close chatbox"
             />
             <MessengerWindow onClose={() => setIsOpen(false)} />
           </>

@@ -81,7 +81,16 @@ docker compose logs -f
 - API: https://api.yourdomain.com
 - Admin Panel: https://yourdomain.com/admin
 
-## Docker Commands
+## Personalization
+
+Before open-sourcing or deploying, make sure to:
+
+1. **Replace Avatar:** Add your own photo to `apps/web/public/images/avatar.jpg`.
+2. **Replace CV:** Add your CV to `docs/my_cv.tex` or provide a different format.
+3. **Update Domain:** Replace `yourdomain.com` in `.env` and `docker-compose.prod.yml` with your actual domain.
+4. **Agent Knowledge:** Update the knowledge base in the Admin Panel to reflect your own background and projects.
+
+## Environment Variables
 
 ### Development
 

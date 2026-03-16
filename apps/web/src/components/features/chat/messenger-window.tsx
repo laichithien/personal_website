@@ -32,7 +32,7 @@ export function MessengerWindow({ onClose }: MessengerWindowProps) {
           <button
             onClick={onClose}
             className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"
-            aria-label="Close messenger"
+            aria-label="Close chatbox"
           >
             <X className="w-4 h-4" />
           </button>
