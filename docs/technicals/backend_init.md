@@ -32,7 +32,7 @@ class AgentConfig(SQLModel, table=True):
     name: str 
     model_provider: str # VD: "google-gla"
     model_name: str     # VD: "gemini-1.5-flash"
-    system_prompt: str  # Prompt gốc (VD: "Bạn là trợ lý của Thiện...")
+    system_prompt: str  # Prompt gốc (VD: "Bạn là trợ lý của the owner...")
     temperature: float = Field(default=0.7)
     is_active: bool = Field(default=True)
 
@@ -125,7 +125,7 @@ async def load_agent_by_slug(slug: str, db: Session) -> Agent:
 
 ### 3.2. Runtime (Khi User Chat)
 
-1. **Request:** Client gọi `POST /api/chat/portfolio-assistant` với tin nhắn "Thiện biết làm gì?".
+1. **Request:** Client gọi `POST /api/chat/portfolio-assistant` với tin nhắn "the owner biết làm gì?".
 2. **FastAPI:**
 * Gọi `load_agent_by_slug("portfolio-assistant")`.
 * Hệ thống query DB -> Lấy Prompt & List Tools -> Dựng Agent.

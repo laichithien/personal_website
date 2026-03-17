@@ -6,12 +6,12 @@ import { QueryProvider } from "@/components/providers/query-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Thiện | AI Engineer",
+  title: "Your Name | AI Engineer",
   description: "The Transparent Core - Digital Identity of an AI Engineer",
   keywords: ["AI Engineer", "Portfolio", "Homelab", "Full Stack"],
-  authors: [{ name: "Thiện" }],
+  authors: [{ name: "Your Name" }],
   openGraph: {
-    title: "Thiện | AI Engineer",
+    title: "Your Name | AI Engineer",
     description: "The Transparent Core",
     type: "website",
     locale: "vi_VN",

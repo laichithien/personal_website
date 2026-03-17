@@ -38,7 +38,7 @@ export function ChatTab() {
           )}
           {!isLoadingHistory && messages.length === 0 && (
             <p className="text-center text-white/40 text-sm py-8">
-              Ask me anything about Thiện&apos;s work, skills, or projects!
+              Ask me anything about the owner&apos;s work, skills, or projects!
             </p>
           )}
           {messages.map((message, index) => (

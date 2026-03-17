@@ -107,7 +107,7 @@ export function HeroSection({ data }: { data: HeroData }) {
               className="flex items-center gap-3 mt-2"
             >
               <a
-                href="https://github.com/laichithien"
+                href="https://github.com/yourusername"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
@@ -116,7 +116,7 @@ export function HeroSection({ data }: { data: HeroData }) {
                 <Github className="w-5 h-5 text-white/70 hover:text-white" />
               </a>
               <a
-                href="https://www.linkedin.com/in/chi-thien-lai/"
+                href="https://www.linkedin.com/in/yourprofile/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"

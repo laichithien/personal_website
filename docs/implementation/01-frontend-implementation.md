@@ -78,12 +78,12 @@ import { QueryProvider } from "@/components/providers/query-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Thiện | AI Engineer",
+  title: "the owner | AI Engineer",
   description: "The Transparent Core - Digital Identity of an AI Engineer",
   keywords: ["AI Engineer", "Portfolio", "Homelab", "Full Stack"],
-  authors: [{ name: "Thiện" }],
+  authors: [{ name: "the owner" }],
   openGraph: {
-    title: "Thiện | AI Engineer",
+    title: "the owner | AI Engineer",
     description: "The Transparent Core",
     type: "website",
     locale: "vi_VN",
@@ -842,8 +842,8 @@ export function useChat() {
 // src/config/portfolio.ts
 export const portfolioConfig = {
   hero: {
-    name: "Thiện",
-    title: "AI Engineer @ Vexere",
+    name: "the owner",
+    title: "AI Engineer @ Your Company",
     tagline: "Building intelligent systems that understand and assist humans.",
     avatar: "/images/avatar.jpg",
   },

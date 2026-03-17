@@ -295,7 +295,7 @@ class ContactLead(SQLModel, table=True):
     purpose: Optional[str] = None  # "hiring", "collaboration", "project", "other"
     message: Optional[str] = None
     session_id: Optional[str] = None  # Link to chat session
-    is_contacted: bool = False  # Has Thiện followed up?
+    is_contacted: bool = False  # Has the owner followed up?
     notes: Optional[str] = None  # Admin notes
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)

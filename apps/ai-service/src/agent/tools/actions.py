@@ -19,8 +19,8 @@ def _get_setting(key: str, default: str = "") -> str:
 
 def send_cv() -> str:
     """
-    Get the download link for Thiện's CV/Resume.
-    Use this when visitors ask to download CV, resume, or want a document about Thiện's background.
+    Get the download link for the owner's CV/Resume.
+    Use this when visitors ask to download CV, resume, or want a document about the owner's background.
 
     Returns:
         Message with CV download link or instructions
@@ -41,18 +41,18 @@ def send_cv() -> str:
                 return (
                     "I apologize, but the CV download link is not currently available. "
                     f"However, you can:\n"
-                    f"• View Thiện's full profile on LinkedIn: {linkedin}\n"
+                    f"• View the owner's full profile on LinkedIn: {linkedin}\n"
                     f"• Request the CV directly via email: {email}\n"
                     "Would you like me to help you with anything else?"
                 )
 
         return (
             "I apologize, but the CV download link is not currently configured. "
-            "Please contact Thiện directly or check back later."
+            "Please contact the owner directly or check back later."
         )
 
     return (
-        f"Here's the link to download Thiện's CV/Resume:\n\n"
+        f"Here's the link to download the owner's CV/Resume:\n\n"
         f"📄 **[Download CV]({resume_url})**\n\n"
         "The CV includes details about his education, work experience, skills, and projects. "
         "Is there anything specific from the CV you'd like me to highlight?"
@@ -69,10 +69,10 @@ def save_contact(
     session_id: Optional[str] = None,
 ) -> str:
     """
-    Save visitor contact information for Thiện to follow up later.
+    Save visitor contact information for the owner to follow up later.
     Use this when visitors want to:
     - Leave their contact info
-    - Get in touch with Thiện
+    - Get in touch with the owner
     - Request a callback or meeting
     - Express interest in hiring or collaboration
 
@@ -115,11 +115,11 @@ def save_contact(
     response = f"Thank you, {name}! I've saved your contact information.\n\n"
 
     if email:
-        response += f"📧 Thiện will reach out to you at **{email}**"
+        response += f"📧 The owner will reach out to you at **{email}**"
     elif phone:
-        response += f"📱 Thiện will contact you at **{phone}**"
+        response += f"📱 The owner will contact you at **{phone}**"
     else:
-        response += "Thiện will review your message"
+        response += "The owner will review your message"
 
     if purpose:
         purpose_text = {
@@ -137,7 +137,7 @@ def save_contact(
 
 def schedule_meeting() -> str:
     """
-    Get information about scheduling a meeting with Thiện.
+    Get information about scheduling a meeting with the owner.
     Use this when visitors want to:
     - Schedule a call or meeting
     - Book time to discuss opportunities
@@ -150,7 +150,7 @@ def schedule_meeting() -> str:
 
     if calendly_link:
         return (
-            f"You can schedule a meeting with Thiện using the link below:\n\n"
+            f"You can schedule a meeting with the owner using the link below:\n\n"
             f"📅 **[Schedule a Meeting]({calendly_link})**\n\n"
             "Available meeting types:\n"
             "• 15-minute quick chat\n"
@@ -170,22 +170,22 @@ def schedule_meeting() -> str:
             linkedin = social.value.get("linkedin", "")
 
             return (
-                "To schedule a meeting with Thiện, you can:\n\n"
+                "To schedule a meeting with the owner, you can:\n\n"
                 f"📧 Send an email to: **{email}**\n"
                 f"💼 Connect on LinkedIn: {linkedin}\n\n"
                 "Please include your preferred times and the topic you'd like to discuss. "
-                "Would you like me to save your contact information so Thiện can reach out to you?"
+                "Would you like me to save your contact information so the owner can reach out to you?"
             )
 
     return (
         "Meeting scheduling is not yet configured. "
-        "Please leave your contact information, and Thiện will get back to you to arrange a meeting."
+        "Please leave your contact information, and the owner will get back to you to arrange a meeting."
     )
 
 
 def fetch_github_stats(username: Optional[str] = None) -> str:
     """
-    Fetch GitHub statistics and activity for Thiện's profile.
+    Fetch GitHub statistics and activity for the owner's profile.
     Use this when visitors ask about:
     - GitHub contributions
     - Open source activity

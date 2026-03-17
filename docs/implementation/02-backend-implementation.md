@@ -450,14 +450,14 @@ def search_knowledge(query: str, limit: int = 3) -> str:
 
 def get_cv_info() -> str:
     """
-    Get comprehensive CV/resume information about Thiện.
+    Get comprehensive CV/resume information about the owner.
 
     Returns:
         Formatted CV information
     """
     return """
-    Name: Thiện
-    Role: AI Engineer @ Vexere
+    Name: the owner
+    Role: AI Engineer @ Your Company
 
     Experience:
     - AI/ML system development
@@ -1079,7 +1079,7 @@ def seed_agent(session: Session, tool_ids: dict[str, int]) -> None:
     agent = AgentConfig(
         slug="portfolio-assistant",
         name="Portfolio Assistant",
-        system_prompt="""You are Thiện's portfolio assistant. You help visitors learn about Thiện's professional background, projects, and technical skills.
+        system_prompt="""You are the owner's portfolio assistant. You help visitors learn about the owner's professional background, projects, and technical skills.
 
 Personality:
 - Friendly and professional
@@ -1087,7 +1087,7 @@ Personality:
 - Helpful and informative
 
 Guidelines:
-- Answer questions about Thiện's experience, skills, and projects
+- Answer questions about the owner's experience, skills, and projects
 - Be concise but thorough
 - If asked about personal opinions, clarify you're an AI assistant
 - Use tools to retrieve accurate information when needed

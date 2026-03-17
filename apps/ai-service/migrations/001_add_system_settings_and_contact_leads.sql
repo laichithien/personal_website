@@ -71,13 +71,13 @@ DELETE FROM tool_definitions WHERE name IN (
 INSERT INTO tool_definitions (name, description, is_active, created_at) VALUES
     (
         'search_profile',
-        'Search through Thiện''s complete profile - background, skills, experience, projects, achievements, publications, courses, and interests. Use for ANY question about Thiện.',
+        'Search through the owner''s complete profile - background, skills, experience, projects, achievements, publications, courses, and interests. Use for ANY question about the owner.',
         true,
         NOW()
     ),
     (
         'send_cv',
-        'Get the download link for Thiện''s CV/Resume. Use when visitors ask to download CV, resume, or want documentation about his background.',
+        'Get the download link for the owner''s CV/Resume. Use when visitors ask to download CV, resume, or want documentation about their background.',
         true,
         NOW()
     ),
@@ -89,13 +89,13 @@ INSERT INTO tool_definitions (name, description, is_active, created_at) VALUES
     ),
     (
         'schedule_meeting',
-        'Get information about scheduling a meeting with Thiện. Use when visitors want to schedule a call, book time, or set up an interview/consultation.',
+        'Get information about scheduling a meeting with the owner. Use when visitors want to schedule a call, book time, or set up an interview/consultation.',
         true,
         NOW()
     ),
     (
         'fetch_github_stats',
-        'Fetch GitHub statistics and activity for Thiện''s profile. Use when visitors ask about GitHub contributions, open source activity, coding statistics, or repositories.',
+        'Fetch GitHub statistics and activity for the owner''s profile. Use when visitors ask about GitHub contributions, open source activity, coding statistics, or repositories.',
         true,
         NOW()
     ),

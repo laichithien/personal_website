@@ -515,8 +515,8 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://yourdomain.com'),
 
   title: {
-    default: 'Thiện | AI Engineer',
-    template: '%s | Thiện',
+    default: 'the owner | AI Engineer',
+    template: '%s | the owner',
   },
 
   description: 'The Transparent Core - Digital identity of an AI Engineer specializing in intelligent systems, data engineering, and full-stack development.',
@@ -531,8 +531,8 @@ export const metadata: Metadata = {
     'Portfolio',
   ],
 
-  authors: [{ name: 'Thiện', url: 'https://yourdomain.com' }],
-  creator: 'Thiện',
+  authors: [{ name: 'the owner', url: 'https://yourdomain.com' }],
+  creator: 'the owner',
 
   openGraph: {
     type: 'website',
@@ -540,21 +540,21 @@ export const metadata: Metadata = {
     alternateLocale: 'en_US',
     url: 'https://yourdomain.com',
     siteName: 'The Transparent Core',
-    title: 'Thiện | AI Engineer',
+    title: 'the owner | AI Engineer',
     description: 'Digital identity of an AI Engineer',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Thiện - AI Engineer Portfolio',
+        alt: 'the owner - AI Engineer Portfolio',
       },
     ],
   },
 
   twitter: {
     card: 'summary_large_image',
-    title: 'Thiện | AI Engineer',
+    title: 'the owner | AI Engineer',
     description: 'Digital identity of an AI Engineer',
     images: ['/og-image.png'],
     creator: '@chithien',
@@ -596,7 +596,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: 'Thiện',
+    name: 'the owner',
     jobTitle: 'AI Engineer',
     url: 'https://yourdomain.com',
     sameAs: [
@@ -612,7 +612,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     ],
     worksFor: {
       '@type': 'Organization',
-      name: 'Vexere',
+      name: 'Your Company',
     },
   };
 
@@ -637,8 +637,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 <main id="main-content">
   <article>
     <header>
-      <h1>Thiện</h1>
-      <p>AI Engineer @ Vexere</p>
+      <h1>the owner</h1>
+      <p>AI Engineer @ Your Company</p>
     </header>
 
     <section id="tech" aria-labelledby="tech-heading">

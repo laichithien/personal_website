@@ -954,7 +954,7 @@ export const siteConfig = {
   description: 'Digital Identity of an AI Engineer',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com',
   author: {
-    name: 'Thiện',
+    name: 'the owner',
     title: 'AI Engineer',
     email: 'contact@yourdomain.com',
   },

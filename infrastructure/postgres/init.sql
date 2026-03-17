@@ -217,7 +217,7 @@ ON CONFLICT (name) DO NOTHING;
 -- Insert default portfolio assistant agent
 INSERT INTO agent_configs (slug, name, system_prompt) VALUES
     ('portfolio-assistant', 'Portfolio Assistant',
-    'You are Thiện''s portfolio assistant. You help visitors learn about Thiện''s professional background, projects, and technical skills.
+    'You are a portfolio assistant. You help visitors learn about the owner''s professional background, projects, and technical skills.
 
 Personality:
 - Friendly and professional
@@ -225,18 +225,11 @@ Personality:
 - Helpful and informative
 
 Guidelines:
-- Answer questions about Thiện''s experience, skills, and projects
+- Answer questions about the owner''s experience, skills, and projects
 - Be concise but thorough
 - If asked about personal opinions, clarify you''re an AI assistant
 - Use tools to retrieve accurate information when needed
-- For contact requests, provide contact information
-
-Knowledge domains:
-- AI/ML engineering
-- Full-stack development
-- Homelab and self-hosting
-- Game development
-- Music (guitar, piano)')
+- For contact requests, provide contact information')
 ON CONFLICT (slug) DO NOTHING;
 
 -- Link tools to portfolio assistant
@@ -252,9 +245,9 @@ ON CONFLICT DO NOTHING;
 -- ===========================================
 
 INSERT INTO knowledge_documents (title, content, source) VALUES
-    ('About Thiện', 'Thiện (Lai Chi Thien) is an AI Engineer with experience in building intelligent systems, data pipelines, and full-stack applications. Currently working at Vexere, focusing on AI/ML systems and data engineering. Contact: contact@yourdomain.com, GitHub: github.com/laichithien, LinkedIn: linkedin.com/in/chi-thien-lai', 'cv'),
+    ('About Me', 'I am an AI Engineer with experience in building intelligent systems, data pipelines, and full-stack applications. Contact: contact@yourdomain.com, GitHub: github.com/yourusername, LinkedIn: linkedin.com/in/yourprofile', 'cv'),
     ('Technical Skills', 'Languages: Python, TypeScript, SQL. Frameworks: FastAPI, Next.js, React. AI/ML: Pydantic-AI, LangChain, RAG systems. Data: PySpark, PostgreSQL, pgvector. DevOps: Docker, Kubernetes, Terraform.', 'cv'),
-    ('Homelab Project', 'Self-hosted infrastructure running on home servers with Kubernetes orchestration. Services include media streaming, home automation, development environments, and AI experimentation.', 'project')
+    ('Sample Project', 'A self-hosted infrastructure project running on home servers with Kubernetes orchestration. Includes various microservices and AI experimentation tools.', 'project')
 ON CONFLICT DO NOTHING;
 
 -- ===========================================
@@ -263,11 +256,11 @@ ON CONFLICT DO NOTHING;
 -- Note: Include updated_at for SQLModel compatibility (NOT NULL without default)
 
 INSERT INTO portfolio_settings (key, value, updated_at) VALUES
-    ('hero', '{"name": "Lai Chi Thiện", "title": "AI Engineer @ Vexere", "tagline": "Building Agentic AI systems that automate complex workflows. Bridging cutting-edge GenAI with robust production systems.", "avatar": "/images/avatar.jpg", "location": "Ho Chi Minh City, Vietnam"}', CURRENT_TIMESTAMP),
-    ('about', '{"summary": "Machine Learning Engineer with strong expertise in building Agentic AI systems and automating complex workflows. Proficient in orchestrating LLMs, implementing Human-in-the-loop architectures, and enforcing software engineering standards.", "highlights": ["Architected Agentic AI systems using Pydantic-AI and OpenRouter", "Implemented Human-in-the-loop (HITL) capabilities for secure tool usage", "Published research on Object Detection at IEEE RIVF 2022", "IELTS 7.0 | GPA 8.42/10 - Top 10 graduating students at UIT"]}', CURRENT_TIMESTAMP),
-    ('education', '{"school": "VNU-HCM University of Information Technology", "degree": "BS in Computer Science", "period": "2020 - 2024", "gpa": "8.42/10", "rank": "Top 10/32 graduating students", "coursework": ["Deep Learning Techniques", "Advanced Computer Vision", "Probability and Statistics", "Python for ML", "Data Mining"]}', CURRENT_TIMESTAMP),
+    ('hero', '{"name": "Your Name", "title": "AI Engineer", "tagline": "Building Agentic AI systems that automate complex workflows. Bridging cutting-edge GenAI with robust production systems.", "avatar": "/images/avatar.jpg", "location": "Your City, Country"}', CURRENT_TIMESTAMP),
+    ('about', '{"summary": "Machine Learning Engineer with expertise in building Agentic AI systems and automating workflows. Proficient in orchestrating LLMs and enforcing software engineering standards.", "highlights": ["Architected Agentic AI systems", "Implemented Human-in-the-loop (HITL) capabilities", "Published research on AI/ML", "BS in Computer Science"]}', CURRENT_TIMESTAMP),
+    ('education', '{"school": "Your University", "degree": "BS in Computer Science", "period": "2020 - 2024", "gpa": "3.8/4.0", "coursework": ["Deep Learning Techniques", "Computer Vision", "Probability and Statistics", "Python for ML"]}', CURRENT_TIMESTAMP),
     ('lifestyle', '{"music": {"instruments": ["Guitar", "Piano"], "currentlyPlaying": "Lo-fi Beats"}, "routines": ["Morning: Code & Coffee", "Afternoon: Deep Work", "Evening: Music & Reading"]}', CURRENT_TIMESTAMP),
-    ('social', '{"github": "https://github.com/laichithien", "linkedin": "https://www.linkedin.com/in/chi-thien-lai/", "email": "contact@yourdomain.com", "phone": "+84 355 273 878"}', CURRENT_TIMESTAMP)
+    ('social', '{"github": "https://github.com/yourusername", "linkedin": "https://www.linkedin.com/in/yourprofile/", "email": "contact@yourdomain.com", "phone": "+00 000 000 000"}', CURRENT_TIMESTAMP)
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = CURRENT_TIMESTAMP;
 
 -- ===========================================
@@ -276,9 +269,8 @@ ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = CURRENT_TIM
 -- Note: Include is_active, created_at, updated_at for SQLModel compatibility
 
 INSERT INTO portfolio_experiences (company, role, period, highlights, display_order, is_active, created_at, updated_at) VALUES
-    ('Vexere', 'AI Engineer', 'Jun 2025 - Present', '["Architected Agentic AI system using Pydantic-AI to automate Customer Experience workflows", "Engineered dynamic tool execution with Human-in-the-loop capabilities", "Integrated Ragflow into Chatwoot for context-aware RAG support", "Orchestrated end-to-end automation for Ticket Exchange flows"]', 0, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('VUCAR', 'Machine Learning Engineer', 'Jan 2025 - Apr 2025', '["Developed VuSEO - AI-Agent automation tool processing 40-50 articles/day", "Enhanced ML model for car pricing accuracy"]', 1, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('UIT-Together Research Group', 'Research Assistant', 'Sep 2020 - Aug 2024', '["Researched Object Detection, Stable Diffusion, and Face Recognition", "Developed real-time demos and optimized inference using ONNX Runtime", "Mentored new research assistants on coding and communication"]', 2, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ('Your Company', 'AI Engineer', '2024 - Present', '["Architected Agentic AI system using Pydantic-AI", "Engineered dynamic tool execution with Human-in-the-loop capabilities", "Integrated RAG support"]', 0, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('Another Company', 'Machine Learning Engineer', '2023 - 2024', '["Developed AI-Agent automation tools", "Enhanced ML model accuracy"]', 1, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT DO NOTHING;
 
 -- ===========================================
@@ -288,14 +280,8 @@ ON CONFLICT DO NOTHING;
 INSERT INTO portfolio_tech_stack (name, icon, category, display_order, is_active, created_at, updated_at) VALUES
     ('Python', 'python', 'language', 0, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
     ('TypeScript', 'typescript', 'language', 1, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('Pydantic-AI', 'python', 'ai', 2, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('PyTorch', 'pytorch', 'ai', 3, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('FastAPI', 'fastapi', 'backend', 4, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('Next.js', 'nextjs', 'frontend', 5, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('PostgreSQL', 'postgres', 'database', 6, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('Docker', 'docker', 'devops', 7, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('Kubernetes', 'k8s', 'devops', 8, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('Ragflow', 'ai', 'ai', 9, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ('FastAPI', 'fastapi', 'backend', 2, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    ('Next.js', 'nextjs', 'frontend', 3, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT DO NOTHING;
 
 -- ===========================================
@@ -303,9 +289,7 @@ ON CONFLICT DO NOTHING;
 -- ===========================================
 
 INSERT INTO portfolio_projects (title, description, tags, display_order, is_featured, is_active, created_at, updated_at) VALUES
-    ('Agentic AI System @ Vexere', 'Production system automating Customer Experience workflows with Human-in-the-loop tool execution and RAG integration', '["Pydantic-AI", "OpenRouter", "Ragflow", "HITL"]', 0, true, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('VuSEO Automation', 'AI-Agent powered SEO automation processing 40-50 articles/day with Google Workspace integration', '["Python", "Strapi", "Google API", "AI Agent"]', 1, false, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-    ('Homelab Infrastructure', 'Self-hosted services on Kubernetes with monitoring via k9s, Kibana, and Logfire', '["Docker", "K8s", "Terraform", "Monitoring"]', 2, false, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ('AI Project', 'Description of your amazing AI project.', '["Python", "AI", "API"]', 0, true, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT DO NOTHING;
 
 -- ===========================================
@@ -313,7 +297,7 @@ ON CONFLICT DO NOTHING;
 -- ===========================================
 
 INSERT INTO portfolio_publications (title, venue, doi, year, display_order, is_active, created_at, updated_at) VALUES
-    ('Empirical Study of the Performance of Object Detection Methods on Road Marking Dataset', 'IEEE RIVF 2022', '10.1109/RIVF55975.2022.10013909', 2022, 0, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ('Your Research Paper', 'International Conference', '10.1109/EXAMPLE', 2023, 0, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT DO NOTHING;
 
 -- ===========================================
@@ -321,7 +305,7 @@ ON CONFLICT DO NOTHING;
 -- ===========================================
 
 INSERT INTO portfolio_achievements (title, event, organization, year, display_order, is_active, created_at, updated_at) VALUES
-    ('Innovation Award', 'AI Tempo Run Competition', 'UIT AI Club', 2021, 0, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ('First Prize', 'Hackathon 2023', 'Tech Organization', 2023, 0, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT DO NOTHING;
 
 -- ===========================================
@@ -329,7 +313,7 @@ ON CONFLICT DO NOTHING;
 -- ===========================================
 
 INSERT INTO portfolio_courses (title, year, focus, display_order, is_active, created_at, updated_at) VALUES
-    ('Machine Learning Engineer K3', 2024, '["Containerization", "Model Deployment", "CI/CD", "Data Engineering"]', 0, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+    ('Advanced ML Course', 2024, '["Topic A", "Topic B"]', 0, true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 ON CONFLICT DO NOTHING;
 
 COMMIT;

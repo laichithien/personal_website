@@ -13,8 +13,8 @@ const navItems = [
 ];
 
 const socialItems = [
-  { icon: Github, href: "https://github.com/laichithien", label: "GitHub" },
-  { icon: Linkedin, href: "https://www.linkedin.com/in/chi-thien-lai/", label: "LinkedIn" },
+  { icon: Github, href: "https://github.com/yourusername", label: "GitHub" },
+  { icon: Linkedin, href: "https://www.linkedin.com/in/yourprofile/", label: "LinkedIn" },
   { icon: Mail, href: "mailto:contact@yourdomain.com", label: "Email" },
 ];
 

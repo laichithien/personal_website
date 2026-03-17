@@ -797,7 +797,7 @@ test.describe('Home Page', () => {
   test('should display hero section', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page.getByRole('heading', { name: /thiện/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /your name/i })).toBeVisible();
     await expect(page.getByText(/ai engineer/i)).toBeVisible();
   });
 

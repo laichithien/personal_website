@@ -81,7 +81,7 @@ POST /api/chat/{agent_slug}
 
 ```json
 {
-  "message": "What projects has Thiện worked on?",
+  "message": "What projects has the owner worked on?",
   "session_id": "optional-uuid-string"
 }
 ```
@@ -95,7 +95,7 @@ POST /api/chat/{agent_slug}
 
 ```json
 {
-  "response": "Thiện has worked on several projects including...",
+  "response": "the owner has worked on several projects including...",
   "session_id": "123e4567-e89b-12d3-a456-426614174000",
   "tool_calls": ["search_projects"]
 }

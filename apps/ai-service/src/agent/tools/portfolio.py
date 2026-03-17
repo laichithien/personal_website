@@ -17,8 +17,8 @@ from src.database.models import (
 
 def search_profile(query: str) -> str:
     """
-    Search through Thiện's complete profile and portfolio information.
-    Use this tool for ANY question about Thiện - background, skills, experience, projects, etc.
+    Search through the owner's complete profile and portfolio information.
+    Use this tool for ANY question about the owner - background, skills, experience, projects, etc.
 
     This unified search covers:
     - Personal info (name, bio, education, contact)
@@ -31,7 +31,7 @@ def search_profile(query: str) -> str:
     - Interests and lifestyle
 
     Args:
-        query: Natural language query about Thiện (e.g., "what technologies does he use",
+        query: Natural language query about the owner (e.g., "what technologies does he use",
                "work experience", "projects with Python", "contact info")
 
     Returns:
@@ -45,7 +45,7 @@ def search_profile(query: str) -> str:
         search_personal = any(kw in query_lower for kw in [
             "who", "about", "bio", "name", "contact", "email", "linkedin", "github",
             "education", "school", "university", "degree", "gpa", "interest", "hobby",
-            "music", "guitar", "lifestyle", "thiện", "thien"
+            "music", "guitar", "lifestyle", "owner"
         ])
 
         search_experience = any(kw in query_lower for kw in [
@@ -133,7 +133,7 @@ def search_profile(query: str) -> str:
                 results.append(knowledge)
 
     if not results:
-        return f"I couldn't find specific information about '{query}'. Try asking about Thiện's experience, skills, projects, or background."
+        return f"I couldn't find specific information about '{query}'. Try asking about the owner's experience, skills, projects, or background."
 
     return "\n\n---\n\n".join(results)
 
@@ -148,7 +148,7 @@ def _get_personal_info(session: Session) -> str:
     ).first()
     if hero and hero.value:
         h = hero.value
-        sections.append(f"**{h.get('name', 'Thiện')}** - {h.get('title', '')}")
+        sections.append(f"**{h.get('name', 'the owner')}** - {h.get('title', '')}")
         if h.get('tagline'):
             sections.append(h.get('tagline'))
 

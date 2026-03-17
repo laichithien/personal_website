@@ -1,7 +1,7 @@
 export const portfolioConfig = {
   hero: {
-    name: "Lai Chi Thiện",
-    title: "AI Engineer @ Vexere",
+    name: "Your Name",
+    title: "AI Engineer @ Your Company",
     tagline:
       "Building Agentic AI systems that automate complex workflows. Bridging cutting-edge GenAI with robust production systems.",
     avatar: "/images/avatar.jpg",
@@ -21,7 +21,7 @@ export const portfolioConfig = {
 
   experience: [
     {
-      company: "Vexere",
+      company: "Your Company",
       role: "AI Engineer",
       period: "Jun 2025 - Present",
       highlights: [
@@ -83,7 +83,7 @@ export const portfolioConfig = {
   projects: [
     {
       id: "1",
-      title: "Agentic AI System @ Vexere",
+      title: "Agentic AI System @ Your Company",
       description:
         "Production system automating Customer Experience workflows with Human-in-the-loop tool execution and RAG integration",
       tags: ["Pydantic-AI", "OpenRouter", "Ragflow", "HITL"],
@@ -144,10 +144,10 @@ export const portfolioConfig = {
   },
 
   social: {
-    github: "https://github.com/laichithien",
-    linkedin: "https://www.linkedin.com/in/chi-thien-lai/",
+    github: "https://github.com/yourusername",
+    linkedin: "https://www.linkedin.com/in/yourprofile/",
     email: "contact@yourdomain.com",
-    phone: "+84 355 273 878",
+    phone: "+00 000 000 000",
   },
 };
 

@@ -106,7 +106,7 @@ Nơi lưu trữ dữ liệu bền vững.
 
 ### 3.2. Internal API & Tool Use
 
-* Khi Agent cần thông tin realtime (ví dụ: "Server nhà Thiện đang chạy service gì?"), nó sẽ không query DB mà dùng **Tool** gọi API nội bộ của Next.js (hoặc service monitoring khác).
+* Khi Agent cần thông tin realtime (ví dụ: "Server nhà the owner đang chạy service gì?"), nó sẽ không query DB mà dùng **Tool** gọi API nội bộ của Next.js (hoặc service monitoring khác).
 * Giao thức: HTTP REST trong mạng Docker nội bộ (`http://web:3000/...`).
 
 ---

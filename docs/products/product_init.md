@@ -53,7 +53,7 @@ Người dùng truy cập trang chủ -> Cuộn xem các "Layer" thông tin -> T
 * **Thiết kế:** Một thẻ Liquid Glass lớn (Highlight Card).
 * **Nội dung:**
 * Avatar (Ảnh thật, chất lượng cao).
-* Headline & Tagline (AI Engineer @ Vexere).
+* Headline & Tagline (AI Engineer @ Your Company).
 * Primary CTA: Điều hướng nhanh xuống phần Tech hoặc Art.
 
 
