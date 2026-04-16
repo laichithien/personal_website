@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import {
   Bot,
+  BookText,
   FileText,
   LayoutDashboard,
   LogOut,
@@ -20,6 +21,7 @@ import { Button } from "@/components/ui/button";
 const navigation = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Portfolio", href: "/admin/portfolio", icon: User },
+  { name: "Blog", href: "/admin/blog", icon: BookText },
   { name: "Agents", href: "/admin/agents", icon: Bot },
   { name: "Tools", href: "/admin/tools", icon: Wrench },
   { name: "Knowledge", href: "/admin/knowledge", icon: FileText },

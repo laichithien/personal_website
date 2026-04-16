@@ -160,6 +160,42 @@ export interface KnowledgeDocumentUpdate {
   doc_metadata?: Record<string, unknown>;
 }
 
+export interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string;
+  cover_image: string | null;
+  content_markdown: string;
+  tags: string[];
+  is_published: boolean;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BlogPostCreate {
+  title: string;
+  slug: string;
+  excerpt?: string;
+  cover_image?: string | null;
+  content_markdown: string;
+  tags?: string[];
+  is_published?: boolean;
+  published_at?: string | null;
+}
+
+export interface BlogPostUpdate {
+  title?: string;
+  slug?: string;
+  excerpt?: string;
+  cover_image?: string | null;
+  content_markdown?: string;
+  tags?: string[];
+  is_published?: boolean;
+  published_at?: string | null;
+}
+
 export interface ChatSession {
   id: number;
   session_id: string;
@@ -464,6 +500,16 @@ export const knowledgeApi = {
   delete: (id: number) => adminApi.delete(`/api/admin/knowledge/${id}`),
   reindex: (id: number) =>
     adminApi.post(`/api/admin/knowledge/${id}/reindex`),
+};
+
+// Blog API
+export const blogAdminApi = {
+  list: () => adminApi.get<BlogPost[]>("/api/admin/blog"),
+  get: (id: number) => adminApi.get<BlogPost>(`/api/admin/blog/${id}`),
+  create: (data: BlogPostCreate) => adminApi.post<BlogPost>("/api/admin/blog", data),
+  update: (id: number, data: BlogPostUpdate) =>
+    adminApi.put<BlogPost>(`/api/admin/blog/${id}`, data),
+  delete: (id: number) => adminApi.delete(`/api/admin/blog/${id}`),
 };
 
 // Sessions API

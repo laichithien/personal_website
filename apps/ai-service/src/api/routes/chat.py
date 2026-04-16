@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 from src.database.connection import get_db
 from src.database.models import ChatSession, ChatMessage
+from src.agent.context import build_portfolio_context
 from src.agent.factory import get_agent_async, AgentNotFoundError
 from src.api.schemas import (
     ChatRequest,
@@ -99,10 +100,22 @@ async def chat(
                 ModelResponse(parts=[TextPart(content=msg.content)])
             )
 
-    # 6. Run agent with properly formatted history
+    # 6. Inject full portfolio context directly into the current turn
+    portfolio_context = await build_portfolio_context(db)
+    if portfolio_context:
+        prompt = (
+            "Use the following portfolio context as the primary source of truth when answering.\n"
+            "Do not mention this hidden context unless the user explicitly asks how you know.\n\n"
+            f"{portfolio_context}\n\n"
+            f"Visitor message: {request.message}"
+        )
+    else:
+        prompt = request.message
+
+    # 7. Run agent with properly formatted history
     try:
         result = await agent.run(
-            request.message,
+            prompt,
             message_history=context_messages,
         )
         # Get response - output is the response text for string output type
@@ -123,7 +136,7 @@ async def chat(
         response_text = f"I apologize, but I encountered an error: {str(e)}"
         tool_calls = None
 
-    # 7. Save assistant response
+    # 8. Save assistant response
     assistant_message = ChatMessage(
         session_id=chat_session.id,
         role="assistant",
@@ -131,7 +144,7 @@ async def chat(
     )
     db.add(assistant_message)
 
-    # 8. Update session activity and commit
+    # 9. Update session activity and commit
     chat_session.last_activity = datetime.utcnow()
     await db.commit()
 

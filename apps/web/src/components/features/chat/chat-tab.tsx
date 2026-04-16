@@ -5,6 +5,7 @@ import { Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@/hooks/use-chat";
+import { useContainedScroll } from "@/hooks/use-contained-scroll";
 import { cn } from "@/lib/utils";
 import { Markdown } from "@/components/shared/markdown";
 
@@ -12,6 +13,9 @@ export function ChatTab() {
   const [input, setInput] = useState("");
   const { messages, sendMessage, isLoading, isLoadingHistory } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  useContainedScroll(messagesContainerRef);
 
   useEffect(() => {
     // Scroll to bottom when messages change
@@ -28,7 +32,11 @@ export function ChatTab() {
   return (
     <>
       {/* Messages - scrollable area */}
-      <div className="flex-1 overflow-y-auto overscroll-contain p-4">
+      <div
+        ref={messagesContainerRef}
+        data-contained-scroll="true"
+        className="vibe-scrollbar flex-1 overflow-y-auto overscroll-contain p-4 [overscroll-behavior:contain] touch-pan-y"
+      >
         <div className="space-y-4">
           {isLoadingHistory && (
             <div className="flex items-center justify-center py-8">

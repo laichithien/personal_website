@@ -1,25 +1,18 @@
 """
-Tool Registry - Maps database tool names to actual Python functions.
+Tool Registry - action-oriented tools only.
 
-When adding a new tool:
-1. Create the function in src/agent/tools/
-2. Add mapping here
-3. Insert into database via seed script or admin API
+Profile/portfolio context is injected directly into the prompt at request time,
+so tools here should be reserved for side effects or external actions.
 """
 
 from typing import Callable, Any
-from src.agent.tools import portfolio, actions
+from src.agent.tools import actions
 
 # Type alias for tool functions
 ToolFunction = Callable[..., Any]
 
 # Central registry mapping tool names to implementations
 AVAILABLE_TOOLS: dict[str, ToolFunction] = {
-    # ===========================================
-    # Search Tools (Unified)
-    # ===========================================
-    "search_profile": portfolio.search_profile,
-
     # ===========================================
     # Action Tools
     # ===========================================

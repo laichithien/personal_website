@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.config import settings
 from src.database.connection import init_db, async_session_maker
-from src.api.routes import chat, portfolio
+from src.api.routes import blog, chat, portfolio
 from src.api.routes.admin import admin_router
 from src.services.auth import AuthService
 
@@ -48,6 +48,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(chat.router)
+app.include_router(blog.router)
 app.include_router(portfolio.router)
 app.include_router(admin_router)
 

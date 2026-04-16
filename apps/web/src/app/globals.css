@@ -48,6 +48,11 @@
 
 :root {
   --radius: 0.625rem;
+  --scrollbar-size: 10px;
+  --scrollbar-track: rgba(9, 18, 28, 0.5);
+  --scrollbar-thumb: linear-gradient(180deg, rgba(103, 232, 249, 0.3), rgba(125, 211, 252, 0.16));
+  --scrollbar-thumb-hover: linear-gradient(180deg, rgba(125, 211, 252, 0.48), rgba(59, 130, 246, 0.28));
+  --scrollbar-border: rgba(255, 255, 255, 0.08);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -82,6 +87,10 @@
 }
 
 .dark {
+  --scrollbar-track: rgba(6, 11, 18, 0.72);
+  --scrollbar-thumb: linear-gradient(180deg, rgba(34, 211, 238, 0.34), rgba(59, 130, 246, 0.2));
+  --scrollbar-thumb-hover: linear-gradient(180deg, rgba(103, 232, 249, 0.52), rgba(96, 165, 250, 0.32));
+  --scrollbar-border: rgba(255, 255, 255, 0.12);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -118,9 +127,56 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(103, 232, 249, 0.4) transparent;
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href],
+  summary,
+  label:has(input:not(:disabled)),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled),
+  input[type="range"]:not(:disabled),
+  select:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    cursor: not-allowed;
+  }
+
+  *::-webkit-scrollbar {
+    width: var(--scrollbar-size);
+    height: var(--scrollbar-size);
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: 999px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 999px;
+    border: 1px solid var(--scrollbar-border);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: transparent;
   }
 }
 
@@ -149,6 +205,10 @@
   /* Glass highlight line */
   .glass-highlight {
     @apply absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent;
+  }
+
+  .vibe-scrollbar {
+    scrollbar-gutter: stable;
   }
 }
 

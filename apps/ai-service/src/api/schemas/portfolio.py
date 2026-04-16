@@ -330,6 +330,33 @@ class CourseResponse(BaseModel):
 
 
 # ==========================================
+# Blog Schemas
+# ==========================================
+
+
+class BlogPostPreviewResponse(BaseModel):
+    """Public blog list item."""
+
+    id: int
+    title: str
+    slug: str
+    excerpt: str
+    cover_image: Optional[str]
+    tags: list[str]
+    published_at: Optional[datetime]
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class BlogPostResponse(BlogPostPreviewResponse):
+    """Public full blog post."""
+
+    content_markdown: str
+
+
+# ==========================================
 # Reorder Schema
 # ==========================================
 

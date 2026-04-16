@@ -1,55 +1,29 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 interface SmoothScrollContainerProps {
   children: ReactNode;
   className?: string;
-  duration?: number; // scroll duration in ms
+  duration?: number;
 }
 
-// Custom event for section change
 export const SECTION_CHANGE_EVENT = "sectionChange";
 
 export function SmoothScrollContainer({
   children,
   className = "",
-  duration = 1200,
+  duration = 720,
 }: SmoothScrollContainerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isScrolling, setIsScrolling] = useState(false);
-  const [currentSection, setCurrentSection] = useState(0);
-  const [isScrollDisabled, setIsScrollDisabled] = useState(false);
-  const currentSectionRef = useRef(currentSection);
-  const isScrollingRef = useRef(isScrolling);
-  const isScrollDisabledRef = useRef(isScrollDisabled);
   const sectionsRef = useRef<HTMLElement[]>([]);
+  const [currentSection, setCurrentSection] = useState(0);
+  const currentSectionRef = useRef(currentSection);
 
-  // Keep refs in sync
   useEffect(() => {
     currentSectionRef.current = currentSection;
   }, [currentSection]);
 
-  useEffect(() => {
-    isScrollingRef.current = isScrolling;
-  }, [isScrolling]);
-
-  useEffect(() => {
-    isScrollDisabledRef.current = isScrollDisabled;
-  }, [isScrollDisabled]);
-
-  // Listen for widget expand state changes to disable/enable scrolling
-  useEffect(() => {
-    const handleWidgetExpandState = (e: Event) => {
-      const customEvent = e as CustomEvent<{ expanded: boolean }>;
-      setIsScrollDisabled(customEvent.detail.expanded);
-    };
-
-    window.addEventListener("widgetExpandStateChange", handleWidgetExpandState);
-    return () => window.removeEventListener("widgetExpandStateChange", handleWidgetExpandState);
-  }, []);
-
-  // Dispatch custom event when section changes
   const dispatchSectionChange = useCallback((sectionId: string, index: number) => {
     window.dispatchEvent(
       new CustomEvent(SECTION_CHANGE_EVENT, {
@@ -58,207 +32,118 @@ export function SmoothScrollContainer({
     );
   }, []);
 
+  const scrollToSection = useCallback(
+    (sectionId: string) => {
+      const container = containerRef.current;
+      const sections = sectionsRef.current;
+      if (!container || sections.length === 0) return;
+
+      const targetIndex = sections.findIndex((section) => section.id === sectionId);
+      if (targetIndex === -1) return;
+
+      const targetSection = sections[targetIndex];
+      if (!targetSection) return;
+
+      setCurrentSection(targetIndex);
+      dispatchSectionChange(targetSection.id, targetIndex);
+
+      container.scrollTo({
+        top: targetSection.offsetTop,
+        behavior: "smooth",
+      });
+    },
+    [dispatchSectionChange]
+  );
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // Get all section elements
     sectionsRef.current = Array.from(container.querySelectorAll("section[id]"));
     const sections = sectionsRef.current;
-    const totalSections = sections.length;
+    if (sections.length === 0) return;
 
-    let lastScrollTime = 0;
-    const scrollCooldown = duration + 100; // Prevent rapid scrolling
+    dispatchSectionChange(sections[0].id, 0);
 
-    const smoothScrollTo = (targetSection: number) => {
-      if (isScrolling || targetSection < 0 || targetSection >= totalSections) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntry = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
 
-      const target = sections[targetSection];
-      if (!target) return;
+        if (!visibleEntry) return;
 
-      setIsScrolling(true);
-      setCurrentSection(targetSection);
+        const index = sections.findIndex((section) => section.id === visibleEntry.target.id);
+        if (index === -1 || index === currentSectionRef.current) return;
 
-      // Dispatch section change event
-      dispatchSectionChange(target.id, targetSection);
-
-      const start = container.scrollTop;
-      const end = target.offsetTop;
-      const distance = end - start;
-      const startTime = performance.now();
-
-      const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-
-      const animateScroll = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = easeOutCubic(progress);
-
-        container.scrollTop = start + distance * eased;
-
-        if (progress < 1) {
-          requestAnimationFrame(animateScroll);
-        } else {
-          setIsScrolling(false);
-        }
-      };
-
-      requestAnimationFrame(animateScroll);
-    };
-
-    const handleWheel = (e: WheelEvent) => {
-      // Don't prevent default if widget is expanded (allow scrolling inside modal)
-      if (isScrollDisabledRef.current) return;
-
-      e.preventDefault();
-
-      const now = Date.now();
-      if (now - lastScrollTime < scrollCooldown) return;
-      lastScrollTime = now;
-
-      const direction = e.deltaY > 0 ? 1 : -1;
-      const nextSection = currentSection + direction;
-      smoothScrollTo(nextSection);
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Don't handle keyboard navigation when widget is expanded
-      if (isScrollDisabledRef.current) return;
-
-      const now = Date.now();
-      if (now - lastScrollTime < scrollCooldown) return;
-
-      if (e.key === "ArrowDown" || e.key === "PageDown") {
-        e.preventDefault();
-        lastScrollTime = now;
-        smoothScrollTo(currentSection + 1);
-      } else if (e.key === "ArrowUp" || e.key === "PageUp") {
-        e.preventDefault();
-        lastScrollTime = now;
-        smoothScrollTo(currentSection - 1);
+        setCurrentSection(index);
+        dispatchSectionChange(visibleEntry.target.id, index);
+      },
+      {
+        root: container,
+        threshold: [0.4, 0.6, 0.8],
       }
-    };
+    );
 
-    // Touch handling for mobile
-    let touchStartY = 0;
-    const handleTouchStart = (e: TouchEvent) => {
-      // Don't track touch when widget is expanded
-      if (isScrollDisabledRef.current) return;
-      touchStartY = e.touches[0].clientY;
-    };
+    sections.forEach((section) => observer.observe(section));
 
-    const handleTouchEnd = (e: TouchEvent) => {
-      // Don't handle touch when widget is expanded
-      if (isScrollDisabledRef.current) return;
-
-      const now = Date.now();
-      if (now - lastScrollTime < scrollCooldown) return;
-
-      const touchEndY = e.changedTouches[0].clientY;
-      const diff = touchStartY - touchEndY;
-
-      if (Math.abs(diff) > 50) {
-        lastScrollTime = now;
-        const direction = diff > 0 ? 1 : -1;
-        smoothScrollTo(currentSection + direction);
-      }
-    };
-
-    container.addEventListener("wheel", handleWheel, { passive: false });
-    container.addEventListener("touchstart", handleTouchStart, { passive: true });
-    container.addEventListener("touchend", handleTouchEnd, { passive: true });
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      container.removeEventListener("wheel", handleWheel);
-      container.removeEventListener("touchstart", handleTouchStart);
-      container.removeEventListener("touchend", handleTouchEnd);
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [currentSection, duration, isScrolling, dispatchSectionChange]);
-
-  // Dispatch initial section on mount
-  useEffect(() => {
-    const sections = sectionsRef.current;
-    if (sections.length > 0 && sections[0]) {
-      dispatchSectionChange(sections[0].id, 0);
-    }
+    return () => observer.disconnect();
   }, [dispatchSectionChange]);
 
-  // Expose scrollToSection for external navigation (floating dock, scroll buttons)
   useEffect(() => {
-    const animateToSection = (index: number) => {
-      if (isScrollingRef.current) return;
-
-      const sections = sectionsRef.current;
-      const container = containerRef.current;
-      const target = sections[index];
-
-      if (!container || !target) return;
-
-      setIsScrolling(true);
-      setCurrentSection(index);
-      dispatchSectionChange(target.id, index);
-
-      const start = container.scrollTop;
-      const end = target.offsetTop;
-      const distance = end - start;
-      const startTime = performance.now();
-
-      const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-
-      const animateScroll = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const eased = easeOutCubic(progress);
-
-        container.scrollTop = start + distance * eased;
-
-        if (progress < 1) {
-          requestAnimationFrame(animateScroll);
-        } else {
-          setIsScrolling(false);
-        }
-      };
-
-      requestAnimationFrame(animateScroll);
-    };
-
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1);
-      const sections = sectionsRef.current;
-      const index = sections.findIndex((s) => s.id === hash);
-
-      if (index !== -1 && index !== currentSectionRef.current) {
-        animateToSection(index);
+      if (hash) {
+        scrollToSection(hash);
       }
     };
 
-    // Also handle direct navigation calls via custom event
-    const handleNavigate = (e: Event) => {
-      const customEvent = e as CustomEvent<{ sectionId: string }>;
-      const { sectionId } = customEvent.detail;
-      const sections = sectionsRef.current;
-      const index = sections.findIndex((s) => s.id === sectionId);
+    const handleNavigate = (event: Event) => {
+      const customEvent = event as CustomEvent<{ sectionId: string }>;
+      scrollToSection(customEvent.detail.sectionId);
+    };
 
-      if (index !== -1) {
-        animateToSection(index);
-      }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!["ArrowDown", "PageDown", "ArrowUp", "PageUp"].includes(event.key)) return;
+
+      const sections = sectionsRef.current;
+      if (sections.length === 0) return;
+
+      event.preventDefault();
+
+      const direction = event.key === "ArrowDown" || event.key === "PageDown" ? 1 : -1;
+      const targetIndex = Math.min(
+        sections.length - 1,
+        Math.max(0, currentSectionRef.current + direction)
+      );
+
+      const targetSection = sections[targetIndex];
+      if (!targetSection) return;
+
+      scrollToSection(targetSection.id);
+      window.history.pushState(null, "", `#${targetSection.id}`);
     };
 
     window.addEventListener("hashchange", handleHashChange);
     window.addEventListener("navigateToSection", handleNavigate);
+    window.addEventListener("keydown", handleKeyDown);
+
+    if (window.location.hash) {
+      handleHashChange();
+    }
 
     return () => {
       window.removeEventListener("hashchange", handleHashChange);
       window.removeEventListener("navigateToSection", handleNavigate);
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [duration, dispatchSectionChange]);
+  }, [scrollToSection, duration]);
 
   return (
     <div
       ref={containerRef}
-      className={`h-screen overflow-hidden ${className}`}
+      className={`h-screen overflow-y-auto overflow-x-hidden snap-y snap-mandatory scroll-smooth ${className}`}
+      style={{ scrollBehavior: "smooth", scrollSnapType: "y mandatory" }}
     >
       {children}
     </div>

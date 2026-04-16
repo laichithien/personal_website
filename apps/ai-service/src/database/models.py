@@ -299,3 +299,25 @@ class ContactLead(SQLModel, table=True):
     notes: Optional[str] = None  # Admin notes
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# ==========================================
+# Blog Tables
+# ==========================================
+
+class BlogPost(SQLModel, table=True):
+    """Markdown blog posts for the public writing section."""
+
+    __tablename__ = "blog_posts"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: str = Field(index=True)
+    slug: str = Field(unique=True, index=True)
+    excerpt: str = ""
+    cover_image: Optional[str] = None
+    content_markdown: str
+    tags: list[str] = Field(default=[], sa_column=Column(JSON))
+    is_published: bool = False
+    published_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)

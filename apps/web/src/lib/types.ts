@@ -22,6 +22,12 @@ export interface HeroData {
   location?: string;
 }
 
+export interface HeroSocialLinks {
+  github?: string;
+  linkedin?: string;
+  email?: string;
+}
+
 export interface AboutData {
   summary: string;
   highlights: string[];

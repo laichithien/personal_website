@@ -1,9 +1,11 @@
 "use client";
 
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
+import { useContainedScroll } from "@/hooks/use-contained-scroll";
 import { ChatTab } from "./chat-tab";
 import { ContactTab } from "./contact-tab";
 
@@ -12,10 +14,13 @@ interface MessengerWindowProps {
 }
 
 export function MessengerWindow({ onClose }: MessengerWindowProps) {
+  const contactContainerRef = useRef<HTMLDivElement>(null);
+  useContainedScroll(contactContainerRef);
+
   return (
     <motion.div
       layoutId="messenger-container"
-      className="fixed bottom-6 right-6 z-50 w-[350px] h-[500px]"
+      className="fixed bottom-6 right-6 z-50 w-[350px] h-[500px] overscroll-contain"
     >
       {/* Use LiquidGlass for consistent design system */}
       <LiquidGlass
@@ -50,12 +55,18 @@ export function MessengerWindow({ onClose }: MessengerWindowProps) {
           </TabsList>
 
           {/* Chat Tab - use calc to fill remaining space */}
-          <TabsContent value="chat" className="h-[calc(500px-130px)] flex flex-col m-0">
+          <TabsContent value="chat" className="h-[calc(500px-130px)] flex flex-col m-0 overflow-hidden">
             <ChatTab />
           </TabsContent>
 
-          <TabsContent value="contact" className="h-[calc(500px-130px)] m-0 p-4 overflow-auto overscroll-contain">
-            <ContactTab />
+          <TabsContent value="contact" className="h-[calc(500px-130px)] m-0 overflow-hidden">
+            <div
+              ref={contactContainerRef}
+              data-contained-scroll="true"
+              className="vibe-scrollbar h-full overflow-auto overscroll-contain p-4 [overscroll-behavior:contain] touch-pan-y"
+            >
+              <ContactTab />
+            </div>
           </TabsContent>
         </Tabs>
       </LiquidGlass>

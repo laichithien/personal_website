@@ -173,6 +173,55 @@ class KnowledgeDocumentResponse(BaseModel):
 
 
 # ==========================================
+# Blog Schemas
+# ==========================================
+
+
+class BlogPostCreate(BaseModel):
+    """Create blog post."""
+
+    title: str = Field(..., min_length=1, max_length=200)
+    slug: str = Field(..., min_length=1, max_length=200, pattern=r"^[a-z0-9-]+$")
+    excerpt: str = Field(default="", max_length=500)
+    cover_image: Optional[str] = None
+    content_markdown: str = Field(..., min_length=1)
+    tags: list[str] = []
+    is_published: bool = False
+    published_at: Optional[datetime] = None
+
+
+class BlogPostUpdate(BaseModel):
+    """Update blog post."""
+
+    title: Optional[str] = None
+    slug: Optional[str] = Field(default=None, pattern=r"^[a-z0-9-]+$")
+    excerpt: Optional[str] = None
+    cover_image: Optional[str] = None
+    content_markdown: Optional[str] = None
+    tags: Optional[list[str]] = None
+    is_published: Optional[bool] = None
+    published_at: Optional[datetime] = None
+
+
+class BlogPostResponse(BaseModel):
+    """Blog post response."""
+
+    id: int
+    title: str
+    slug: str
+    excerpt: str
+    cover_image: Optional[str]
+    content_markdown: str
+    tags: list[str]
+    is_published: bool
+    published_at: Optional[datetime]
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+# ==========================================
 # Chat Session Schemas
 # ==========================================
 

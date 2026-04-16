@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   agentsApi,
   authApi,
+  blogAdminApi,
   dashboardApi,
   knowledgeApi,
   portfolioApi,
@@ -13,6 +14,8 @@ import {
   toolsApi,
   type AgentConfigCreate,
   type AgentConfigUpdate,
+  type BlogPostCreate,
+  type BlogPostUpdate,
   type KnowledgeDocumentCreate,
   type KnowledgeDocumentUpdate,
   type PortfolioAchievementCreate,
@@ -260,6 +263,57 @@ export function useDeleteKnowledgeDocument() {
     mutationFn: (id: number) => knowledgeApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "knowledge"] });
+    },
+  });
+}
+
+// ==========================================
+// Blog Hooks
+// ==========================================
+
+export function useBlogPosts() {
+  return useQuery({
+    queryKey: ["admin", "blog"],
+    queryFn: () => blogAdminApi.list().then((res) => res.data),
+  });
+}
+
+export function useBlogPost(id: number) {
+  return useQuery({
+    queryKey: ["admin", "blog", id],
+    queryFn: () => blogAdminApi.get(id).then((res) => res.data),
+    enabled: !!id,
+  });
+}
+
+export function useCreateBlogPost() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: BlogPostCreate) => blogAdminApi.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "blog"] });
+    },
+  });
+}
+
+export function useUpdateBlogPost() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: BlogPostUpdate }) =>
+      blogAdminApi.update(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "blog"] });
+      queryClient.invalidateQueries({ queryKey: ["admin", "blog", id] });
+    },
+  });
+}
+
+export function useDeleteBlogPost() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => blogAdminApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "blog"] });
     },
   });
 }

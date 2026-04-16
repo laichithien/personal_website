@@ -7,6 +7,7 @@ import { MessengerButton } from "@/components/features/chat/messenger-button";
 import { FloatingDock } from "@/components/shared/floating-dock";
 import { SmoothScrollContainer } from "@/components/shared/smooth-scroll-container";
 import { ScrollUpButton } from "@/components/shared/scroll-up-button";
+import { fetchBlogPosts } from "@/lib/blog-api";
 import { fetchPortfolio } from "@/lib/portfolio-api";
 import { portfolioConfig } from "@/config/portfolio";
 
@@ -16,6 +17,7 @@ import type {
   Project,
   TechItem,
   HeroData,
+  HeroSocialLinks,
   EducationData,
   PublicationItem,
   AchievementItem,
@@ -25,6 +27,7 @@ import type {
 
 interface TransformedData {
   hero: HeroData;
+  social: HeroSocialLinks;
   education: EducationData;
   projects: Project[];
   techStack: TechItem[];
@@ -37,10 +40,18 @@ interface TransformedData {
 async function getPortfolioData(): Promise<TransformedData> {
   try {
     const data = await fetchPortfolio();
+    const heroAvatar =
+      !data.hero.avatar || data.hero.avatar === "/images/avatar.jpg"
+        ? "/images/avatar.example.jpg"
+        : data.hero.avatar;
 
     // Transform API data to match component types
     return {
-      hero: data.hero,
+      hero: {
+        ...data.hero,
+        avatar: heroAvatar,
+      },
+      social: data.social,
       education: data.education,
       projects: data.projects.map((p) => ({
         id: String(p.id),
@@ -80,6 +91,7 @@ async function getPortfolioData(): Promise<TransformedData> {
     // Fallback to static config if API fails
     return {
       hero: portfolioConfig.hero,
+      social: portfolioConfig.social,
       education: portfolioConfig.education,
       projects: portfolioConfig.projects.map((project) => ({
         id: project.id,
@@ -98,21 +110,22 @@ async function getPortfolioData(): Promise<TransformedData> {
 
 export default async function Home() {
   const data = await getPortfolioData();
+  const blogPosts = await fetchBlogPosts().catch(() => []);
 
   return (
-    <SmoothScrollContainer duration={1200} className="relative">
+    <SmoothScrollContainer duration={720} className="relative">
       {/* Background Layer */}
       <MeshBackground />
 
       {/* Content Layer */}
       <div className="relative z-10">
         {/* Hero Section */}
-        <section id="hero" className="min-h-screen flex items-center justify-center px-4">
-          <HeroSection data={data.hero} />
+        <section id="hero" className="min-h-screen snap-start flex items-center justify-center px-4">
+          <HeroSection data={data.hero} social={data.social} posts={blogPosts.slice(0, 4)} />
         </section>
 
         {/* Tech & Lab Section */}
-        <section id="tech" className="relative min-h-screen py-20 px-4">
+        <section id="tech" className="relative min-h-screen snap-start py-20 px-4">
           <ScrollUpButton targetSection="hero" />
           <BentoGrid
             projects={data.projects}
@@ -121,7 +134,7 @@ export default async function Home() {
         </section>
 
         {/* Credentials Section */}
-        <section id="credentials" className="relative min-h-screen py-20 px-4">
+        <section id="credentials" className="relative min-h-screen snap-start py-20 px-4">
           <ScrollUpButton targetSection="tech" />
           <CredentialsSection
             education={data.education}
@@ -132,7 +145,7 @@ export default async function Home() {
         </section>
 
         {/* Soul Section */}
-        <section id="soul" className="relative min-h-screen py-20 px-4">
+        <section id="soul" className="relative min-h-screen snap-start py-20 px-4">
           <ScrollUpButton targetSection="credentials" />
           <SoulSection data={data.lifestyle} />
         </section>
