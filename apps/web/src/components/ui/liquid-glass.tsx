@@ -11,12 +11,29 @@ interface LiquidGlassProps extends Omit<HTMLMotionProps<"div">, "children"> {
   children?: ReactNode;
 }
 
-const blurMap = {
-  sm: "backdrop-blur-sm",
-  md: "backdrop-blur-md",
-  lg: "backdrop-blur-lg",
-  xl: "backdrop-blur-xl",
+export const liquidGlassBlurMap = {
+  sm: "backdrop-blur-[6px]",
+  md: "backdrop-blur-sm",
+  lg: "backdrop-blur-md",
+  xl: "backdrop-blur-lg",
 };
+
+export function getLiquidGlassClassName({
+  blur = "md",
+  glow = false,
+  hoverable = false,
+}: Pick<LiquidGlassProps, "blur" | "glow" | "hoverable">) {
+  return cn(
+    "relative rounded-2xl",
+    "bg-white/6",
+    liquidGlassBlurMap[blur],
+    "border border-white/10",
+    "shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]",
+    "shadow-xl shadow-black/15",
+    glow && "ring-1 ring-cyan-500/16 shadow-[0_0_22px_rgba(6,182,212,0.12)]",
+    hoverable && "transition-all duration-300 hover:bg-white/10 hover:border-white/20"
+  );
+}
 
 export const LiquidGlass = forwardRef<HTMLDivElement, LiquidGlassProps>(
   ({ className, blur = "md", glow = false, hoverable = false, children, ...props }, ref) => {
@@ -24,24 +41,7 @@ export const LiquidGlass = forwardRef<HTMLDivElement, LiquidGlassProps>(
       <motion.div
         ref={ref}
         className={cn(
-          // Base glass styles
-          "relative rounded-2xl",
-          "bg-white/5",
-          blurMap[blur],
-          "border border-white/10",
-
-          // Inner shadow for depth
-          "shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]",
-
-          // Outer shadow
-          "shadow-xl shadow-black/20",
-
-          // Glow effect
-          glow && "ring-1 ring-cyan-500/20 shadow-[0_0_30px_rgba(6,182,212,0.15)]",
-
-          // Hover state
-          hoverable && "transition-all duration-300 hover:bg-white/10 hover:border-white/20",
-
+          getLiquidGlassClassName({ blur, glow, hoverable }),
           className
         )}
         {...props}

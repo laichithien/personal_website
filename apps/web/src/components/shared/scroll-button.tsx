@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronDown, ArrowUpToLine } from "lucide-react";
+import { ArrowLeftToLine, ArrowUpToLine, ChevronDown, ChevronRight } from "lucide-react";
+import { GlassIconButton } from "@/components/ui/glass-icon-button";
+import { navigateToSection } from "@/lib/navigation-events";
 
 interface ScrollButtonProps {
   targetId: string;
@@ -9,18 +11,7 @@ interface ScrollButtonProps {
 }
 
 export function ScrollButton({ targetId, isBackToTop = false }: ScrollButtonProps) {
-  const scrollTo = () => {
-    // Dispatch custom event for smooth scroll navigation
-    window.dispatchEvent(
-      new CustomEvent("navigateToSection", {
-        detail: { sectionId: targetId },
-      })
-    );
-    // Also update hash for URL consistency
-    window.history.pushState(null, "", `#${targetId}`);
-  };
-
-  const Icon = isBackToTop ? ArrowUpToLine : ChevronDown;
+  const scrollTo = () => navigateToSection(targetId);
 
   return (
     <motion.div
@@ -29,13 +20,24 @@ export function ScrollButton({ targetId, isBackToTop = false }: ScrollButtonProp
       viewport={{ once: true }}
       className="flex justify-center mt-12"
     >
-      <button
+      <GlassIconButton
         onClick={scrollTo}
-        className="w-12 h-12 rounded-full border border-white/20 hover:bg-white/10 hover:border-white/40 transition-all flex items-center justify-center group"
-        aria-label={isBackToTop ? "Back to top" : "Scroll to next section"}
+        size="lg"
+        className="border-white/20 group hover:border-white/40"
+        aria-label={isBackToTop ? "Go to first section" : "Go to next section"}
       >
-        <Icon className="w-6 h-6 text-white/60 group-hover:text-white transition-colors" />
-      </button>
+        {isBackToTop ? (
+          <>
+            <ArrowLeftToLine className="w-6 h-6 transition-colors md:hidden" />
+            <ArrowUpToLine className="hidden w-6 h-6 transition-colors md:block" />
+          </>
+        ) : (
+          <>
+            <ChevronRight className="w-6 h-6 transition-colors md:hidden" />
+            <ChevronDown className="hidden w-6 h-6 transition-colors md:block" />
+          </>
+        )}
+      </GlassIconButton>
     </motion.div>
   );
 }

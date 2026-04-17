@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/features/hero/hero-section";
 import { BentoGrid } from "@/components/features/bento/bento-grid";
 import { CredentialsSection } from "@/components/features/credentials/credentials-section";
 import { SoulSection } from "@/components/features/soul/soul-section";
+import { RecentPostsSection } from "@/components/features/blog/recent-posts-section";
 import { MessengerButton } from "@/components/features/chat/messenger-button";
 import { FloatingDock } from "@/components/shared/floating-dock";
 import { SmoothScrollContainer } from "@/components/shared/smooth-scroll-container";
@@ -118,14 +119,31 @@ export default async function Home() {
       <MeshBackground />
 
       {/* Content Layer */}
-      <div className="relative z-10">
+      <div className="relative z-10 flex h-screen flex-row md:block md:h-auto">
         {/* Hero Section */}
-        <section id="hero" className="min-h-screen snap-start flex items-center justify-center px-4">
+        <section
+          id="hero"
+          className="flex h-screen w-screen shrink-0 snap-start items-start justify-center overflow-y-auto overflow-x-hidden px-4 py-8 md:min-h-screen md:w-auto md:items-center md:overflow-visible md:py-0"
+        >
           <HeroSection data={data.hero} social={data.social} posts={blogPosts.slice(0, 4)} />
         </section>
 
+        <section
+          id="writing"
+          className="relative h-screen w-screen shrink-0 snap-start overflow-y-auto overflow-x-hidden px-4 py-20 md:hidden"
+        >
+          <RecentPostsSection
+            posts={blogPosts.slice(0, 6)}
+            previousSectionId="hero"
+            nextSectionId="tech"
+          />
+        </section>
+
         {/* Tech & Lab Section */}
-        <section id="tech" className="relative min-h-screen snap-start py-20 px-4">
+        <section
+          id="tech"
+          className="relative h-screen w-screen shrink-0 snap-start overflow-y-auto overflow-x-hidden px-4 py-20 md:min-h-screen md:w-auto md:overflow-visible"
+        >
           <ScrollUpButton targetSection="hero" />
           <BentoGrid
             projects={data.projects}
@@ -134,7 +152,10 @@ export default async function Home() {
         </section>
 
         {/* Credentials Section */}
-        <section id="credentials" className="relative min-h-screen snap-start py-20 px-4">
+        <section
+          id="credentials"
+          className="relative h-screen w-screen shrink-0 snap-start overflow-y-auto overflow-x-hidden px-4 py-20 md:min-h-screen md:w-auto md:overflow-visible"
+        >
           <ScrollUpButton targetSection="tech" />
           <CredentialsSection
             education={data.education}
@@ -145,14 +166,17 @@ export default async function Home() {
         </section>
 
         {/* Soul Section */}
-        <section id="soul" className="relative min-h-screen snap-start py-20 px-4">
+        <section
+          id="soul"
+          className="relative h-screen w-screen shrink-0 snap-start overflow-y-auto overflow-x-hidden px-4 py-20 md:min-h-screen md:w-auto md:overflow-visible"
+        >
           <ScrollUpButton targetSection="credentials" />
           <SoulSection data={data.lifestyle} />
         </section>
       </div>
 
-      {/* Floating Elements */}
-      <FloatingDock />
+        {/* Floating Elements */}
+        <FloatingDock />
       <MessengerButton />
     </SmoothScrollContainer>
   );

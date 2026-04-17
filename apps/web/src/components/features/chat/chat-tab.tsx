@@ -5,17 +5,14 @@ import { Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@/hooks/use-chat";
-import { useContainedScroll } from "@/hooks/use-contained-scroll";
 import { cn } from "@/lib/utils";
 import { Markdown } from "@/components/shared/markdown";
+import { ContainedScrollArea } from "@/components/ui/contained-scroll-area";
 
 export function ChatTab() {
   const [input, setInput] = useState("");
   const { messages, sendMessage, isLoading, isLoadingHistory } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
-
-  useContainedScroll(messagesContainerRef);
 
   useEffect(() => {
     // Scroll to bottom when messages change
@@ -32,11 +29,7 @@ export function ChatTab() {
   return (
     <>
       {/* Messages - scrollable area */}
-      <div
-        ref={messagesContainerRef}
-        data-contained-scroll="true"
-        className="vibe-scrollbar flex-1 overflow-y-auto overscroll-contain p-4 [overscroll-behavior:contain] touch-pan-y"
-      >
+      <ContainedScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {isLoadingHistory && (
             <div className="flex items-center justify-center py-8">
@@ -82,7 +75,7 @@ export function ChatTab() {
           )}
           <div ref={messagesEndRef} />
         </div>
-      </div>
+      </ContainedScrollArea>
 
       {/* Input - fixed at bottom */}
       <form onSubmit={handleSubmit} className="shrink-0 p-4 border-t border-white/10 bg-black/20">

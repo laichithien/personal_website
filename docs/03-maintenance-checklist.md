@@ -14,6 +14,10 @@ Use this as the cleanup baseline for future passes.
 - Avoid duplicating fetch clients with different fallback ports.
 - Add new public content modules as DB-backed APIs before hardcoding UI mocks.
 - Prefer module-focused components over putting logic directly in page files.
+- Prefer native scroll behavior and `overscroll-behavior` over custom wheel smoothing.
+- Keep permanent background effects mostly CSS-based and low-frequency.
+- Reuse `ContainedScrollArea`, `GlassIconButton`, and `getLiquidGlassClassName` before adding new one-off UI wrappers.
+- Route section-jump behavior through `apps/web/src/lib/navigation-events.ts`.
 
 ## Backend Maintainability
 

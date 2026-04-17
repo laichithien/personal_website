@@ -1,13 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { Button } from "@/components/ui/button";
+import { GlassIconButton } from "@/components/ui/glass-icon-button";
 import { ArrowDown, ArrowUpRight, Sparkles, Github, Linkedin, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useContainedScroll } from "@/hooks/use-contained-scroll";
 import type { HeroSocialLinks } from "@/lib/types";
 
 interface HeroBlogPost {
@@ -37,10 +37,7 @@ export function HeroSection({
   social: HeroSocialLinks;
 }) {
   const [avatarFailed, setAvatarFailed] = useState(false);
-  const postsContainerRef = useRef<HTMLDivElement>(null);
   const avatarSrc = avatarFailed || !data.avatar ? "/images/avatar.example.jpg" : data.avatar;
-
-  useContainedScroll(postsContainerRef);
 
   const scrollToTech = () => {
     document.getElementById("tech")?.scrollIntoView({ behavior: "smooth" });
@@ -133,35 +130,25 @@ export function HeroSection({
                   className="flex items-center gap-3 mt-2"
                 >
                   {social.github && (
-                    <a
-                      href={social.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
-                      aria-label="GitHub"
-                    >
-                      <Github className="w-5 h-5 text-white/70 hover:text-white" />
-                    </a>
+                    <GlassIconButton asChild size="sm">
+                      <a href={social.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                        <Github className="w-5 h-5" />
+                      </a>
+                    </GlassIconButton>
                   )}
                   {social.linkedin && (
-                    <a
-                      href={social.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
-                      aria-label="LinkedIn"
-                    >
-                      <Linkedin className="w-5 h-5 text-white/70 hover:text-white" />
-                    </a>
+                    <GlassIconButton asChild size="sm">
+                      <a href={social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                        <Linkedin className="w-5 h-5" />
+                      </a>
+                    </GlassIconButton>
                   )}
                   {social.email && (
-                    <a
-                      href={`mailto:${social.email}`}
-                      className="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
-                      aria-label="Email"
-                    >
-                      <Mail className="w-5 h-5 text-white/70 hover:text-white" />
-                    </a>
+                    <GlassIconButton asChild size="sm">
+                      <a href={`mailto:${social.email}`} aria-label="Email">
+                        <Mail className="w-5 h-5" />
+                      </a>
+                    </GlassIconButton>
                   )}
                 </motion.div>
 
@@ -194,7 +181,7 @@ export function HeroSection({
         <LiquidGlass
           blur="xl"
           glow
-          className="min-h-[420px] max-h-[420px] overflow-hidden bg-white/[0.06] p-5 md:p-6 [&>div:last-child]:flex [&>div:last-child]:h-full [&>div:last-child]:min-h-0 [&>div:last-child]:flex-col"
+          className="hidden min-h-[420px] max-h-[420px] overflow-hidden bg-white/[0.06] p-5 md:p-6 xl:block [&>div:last-child]:flex [&>div:last-child]:h-full [&>div:last-child]:min-h-0 [&>div:last-child]:flex-col"
         >
           <div className="flex items-center justify-between gap-3 mb-5">
             <div>
@@ -210,12 +197,8 @@ export function HeroSection({
               View all
             </Link>
           </div>
-
           {posts.length > 0 ? (
-            <div
-              ref={postsContainerRef}
-              className="vibe-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1 [overscroll-behavior:contain] touch-pan-y"
-            >
+            <div className="min-h-0 flex-1 pr-1">
               <div className="flex flex-col gap-3">
                 {posts.slice(0, 4).map((post, index) => (
                   <motion.div
@@ -227,22 +210,22 @@ export function HeroSection({
                   >
                     <Link
                       href={`/blog/${post.slug}`}
-                      className="h-full block rounded-2xl border border-white/10 bg-black/20 hover:bg-white/[0.07] transition-colors p-4"
+                      className="block h-full rounded-2xl border border-white/10 bg-black/20 p-4 transition-colors hover:bg-white/[0.07]"
                     >
-                      <div className="flex flex-wrap gap-2 mb-3">
+                      <div className="mb-3 flex flex-wrap gap-2">
                         {post.tags.slice(0, 2).map((tag) => (
                           <span
                             key={tag}
-                            className="px-2 py-1 rounded-full text-[11px] bg-cyan-500/10 text-cyan-300 border border-cyan-500/20"
+                            className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2 py-1 text-[11px] text-cyan-300"
                           >
                             {tag}
                           </span>
                         ))}
                       </div>
-                      <h3 className="text-lg font-medium text-white leading-7 line-clamp-2">
+                      <h3 className="line-clamp-2 text-lg font-medium leading-7 text-white">
                         {post.title}
                       </h3>
-                      <p className="mt-2 text-sm text-zinc-400 leading-6 line-clamp-3">
+                      <p className="mt-2 line-clamp-3 text-sm leading-6 text-zinc-400">
                         {post.excerpt || "Open the post to read the full write-up."}
                       </p>
                       <p className="mt-4 text-xs text-zinc-500">

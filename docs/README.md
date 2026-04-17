@@ -11,6 +11,7 @@ Read the repo in this order if the goal is review, cleanup, or onboarding.
 
 - Codebase review map: [02-codebase-review-map.md](/home/chithien/Workspace/Personal/projects/personal_website/docs/02-codebase-review-map.md)
 - Maintenance checklist: [03-maintenance-checklist.md](/home/chithien/Workspace/Personal/projects/personal_website/docs/03-maintenance-checklist.md)
+- Frontend performance notes: [04-frontend-performance.md](/home/chithien/Workspace/Personal/projects/personal_website/docs/04-frontend-performance.md)
 
 ## 3. Module Detail
 

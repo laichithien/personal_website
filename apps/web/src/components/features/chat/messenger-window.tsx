@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ContainedScrollArea } from "@/components/ui/contained-scroll-area";
+import { GlassIconButton } from "@/components/ui/glass-icon-button";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
-import { useContainedScroll } from "@/hooks/use-contained-scroll";
 import { ChatTab } from "./chat-tab";
 import { ContactTab } from "./contact-tab";
 
@@ -14,9 +14,6 @@ interface MessengerWindowProps {
 }
 
 export function MessengerWindow({ onClose }: MessengerWindowProps) {
-  const contactContainerRef = useRef<HTMLDivElement>(null);
-  useContainedScroll(contactContainerRef);
-
   return (
     <motion.div
       layoutId="messenger-container"
@@ -34,13 +31,9 @@ export function MessengerWindow({ onClose }: MessengerWindowProps) {
             <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
             <h3 className="font-semibold">Send message</h3>
           </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors"
-            aria-label="Close chatbox"
-          >
+          <GlassIconButton onClick={onClose} size="sm" aria-label="Close chatbox">
             <X className="w-4 h-4" />
-          </button>
+          </GlassIconButton>
         </div>
 
         {/* Tabs */}
@@ -60,13 +53,9 @@ export function MessengerWindow({ onClose }: MessengerWindowProps) {
           </TabsContent>
 
           <TabsContent value="contact" className="h-[calc(500px-130px)] m-0 overflow-hidden">
-            <div
-              ref={contactContainerRef}
-              data-contained-scroll="true"
-              className="vibe-scrollbar h-full overflow-auto overscroll-contain p-4 [overscroll-behavior:contain] touch-pan-y"
-            >
+            <ContainedScrollArea className="h-full p-4">
               <ContactTab />
-            </div>
+            </ContainedScrollArea>
           </TabsContent>
         </Tabs>
       </LiquidGlass>
