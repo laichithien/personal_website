@@ -1,9 +1,4 @@
-function getApiBaseUrl(): string {
-  if (typeof window === "undefined") {
-    return process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3344";
-  }
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:3344";
-}
+import { getApiBaseUrl } from "@/lib/api-base";
 
 export interface PublicBlogPostPreview {
   id: number;

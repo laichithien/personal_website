@@ -13,6 +13,7 @@ from src.api.schemas import (
     ChatHistoryResponse,
     ChatHistoryItem,
 )
+from src.utils.datetime import utcnow
 
 # CRITICAL: Import Pydantic-AI message types for history
 from pydantic_ai.messages import (
@@ -145,7 +146,7 @@ async def chat(
     db.add(assistant_message)
 
     # 9. Update session activity and commit
-    chat_session.last_activity = datetime.utcnow()
+    chat_session.last_activity = utcnow()
     await db.commit()
 
     return ChatResponse(

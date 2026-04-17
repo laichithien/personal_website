@@ -1,390 +1,68 @@
 # Personal Website
 
-A modern portfolio website with AI-powered chat assistant and full-featured admin panel. Features a clean, glass-morphism inspired design aesthetic.
+Portfolio web app with:
 
-## Tech Stack
+- public marketing site
+- AI chat assistant
+- admin panel for portfolio, knowledge, tools, agents, and blog posts
+- FastAPI backend with PostgreSQL
 
-**Frontend**
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS v4
-- Framer Motion
-- shadcn/ui
-- React Query
+## Stack
 
-**Backend**
-- FastAPI
-- Pydantic-AI
-- SQLModel + PostgreSQL
-- pgvector (RAG support)
-- JWT Authentication (httpOnly cookies)
-- bcrypt password hashing
+- `apps/web`: Next.js 16, React 19, Tailwind CSS v4, Framer Motion, React Query
+- `apps/ai-service`: FastAPI, SQLModel, PostgreSQL, pgvector, Pydantic-AI
+- Docker-first local development with separate dev and prod compose files
 
-**AI & Features**
-- OpenRouter API integration
-- Model: `xiaomi/mimo-v2-flash:free`
-- RAG (Retrieval Augmented Generation) support
-- Interactive chat assistant
-- Admin panel for content management
+## Start Here
 
-## Prerequisites
+- Wide overview: [docs/README.md](/home/chithien/Workspace/Personal/projects/personal_website/docs/README.md)
+- System overview: [docs/00-system-overview.md](/home/chithien/Workspace/Personal/projects/personal_website/docs/00-system-overview.md)
+- Runtime flows: [docs/01-runtime-flows.md](/home/chithien/Workspace/Personal/projects/personal_website/docs/01-runtime-flows.md)
+- Review map: [docs/02-codebase-review-map.md](/home/chithien/Workspace/Personal/projects/personal_website/docs/02-codebase-review-map.md)
+- Maintenance checklist: [docs/03-maintenance-checklist.md](/home/chithien/Workspace/Personal/projects/personal_website/docs/03-maintenance-checklist.md)
 
-- Node.js 20+
-- Python 3.11+
-- Docker & Docker Compose
-- [direnv](https://direnv.net/) (optional, for auto-loading env)
+## Local Development
 
-## Quick Start
-
-### 1. Clone and Setup Environment
+Preferred:
 
 ```bash
-cd /path/to/personal_website
-
-# Copy environment file
-cp .env.example .env
-
-# Edit .env with your OpenRouter API key
-# OPENROUTER_API_KEY=your_key_here
-# OPENAI_API_KEY=your_key_here  # Same as OpenRouter key
-
-# If using direnv
-direnv allow
+docker compose -f docker-compose.dev.yml up -d
 ```
 
-### 2. Run with Docker Compose
+Useful commands:
 
 ```bash
-# Build images (first time only)
-docker compose build                              # Dev
-docker compose -f docker-compose.prod.yml build   # Prod
+docker compose -f docker-compose.dev.yml ps
+docker compose -f docker-compose.dev.yml logs -f web
+docker compose -f docker-compose.dev.yml logs -f api
+docker compose -f docker-compose.dev.yml down
+```
 
-# Start development
-docker compose up -d
+Default dev ports:
 
-# Start production
+- web: `http://localhost:3343`
+- api: `http://localhost:3344`
+- postgres: `localhost:5452`
+
+Production compose remains separate:
+
+```bash
 docker compose -f docker-compose.prod.yml up -d
-
-# View logs
-docker compose logs -f
 ```
 
-## Ports & URLs
+## Repository Shape
 
-| Environment | Web | API | Postgres | Access |
-|-------------|-----|-----|----------|--------|
-| **Development** | `localhost:3343` | `localhost:3344` | `localhost:5452` | Local only |
-| **Production** | `localhost:3333` | `localhost:3334` | `localhost:5442` | Via Cloudflare Tunnel |
-
-**Production Public URLs:**
-- Frontend: https://yourdomain.com
-- API: https://api.yourdomain.com
-- Admin Panel: https://yourdomain.com/admin
-
-## Personalization
-
-Before open-sourcing or deploying, make sure to:
-
-1. **Replace Avatar:** Add your own photo to `apps/web/public/images/avatar.jpg`.
-2. **Replace CV:** Add your CV to `docs/my_cv.tex` or provide a different format.
-3. **Update Domain:** Replace `yourdomain.com` in `.env` and `docker-compose.prod.yml` with your actual domain.
-4. **Agent Knowledge:** Update the knowledge base in the Admin Panel to reflect your own background and projects.
-
-## Environment Variables
-
-### Development
-
-```bash
-# Start dev environment
-docker compose up -d
-
-# View logs
-docker compose logs -f
-docker compose logs -f web   # specific service
-
-# Stop dev
-docker compose down
-
-# Rebuild after Dockerfile changes
-docker compose up -d --build
+```text
+apps/
+  ai-service/   FastAPI backend, DB models, agent runtime, admin/public APIs
+  web/          Next.js frontend, admin UI, public site, blog, chat
+docs/           System docs, module docs, implementation notes
+scripts/        Setup and DB bootstrap helpers
+infrastructure/ Postgres init and Cloudflare tunnel config
 ```
 
-### Production
+## Quality Notes
 
-```bash
-# Start production
-docker compose -f docker-compose.prod.yml up -d
-
-# View logs
-docker compose -f docker-compose.prod.yml logs -f
-
-# Stop production
-docker compose -f docker-compose.prod.yml down
-
-# Rebuild production (required for code changes)
-docker compose -f docker-compose.prod.yml up -d --build
-```
-
-### Run Both Simultaneously
-
-Dev and prod use different ports and container names, so they can run at the same time:
-
-```bash
-# Start both
-docker compose up -d
-docker compose -f docker-compose.prod.yml up -d
-
-# Stop both
-docker compose down
-docker compose -f docker-compose.prod.yml down
-```
-
-### Reset Database
-
-```bash
-# Dev (removes tc-postgres-data-dev volume)
-docker compose down -v
-
-# Prod (removes tc-postgres-data volume)
-docker compose -f docker-compose.prod.yml down -v
-```
-
-## Local Development (without Docker)
-
-### Start Database Only
-
-```bash
-docker compose up -d postgres
-```
-
-### Run Backend
-
-```bash
-cd apps/ai-service
-
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-# .venv\Scripts\activate   # Windows
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run API server
-uvicorn src.main:app --reload --port 8000
-```
-
-### Run Frontend
-
-```bash
-cd apps/web
-
-# Install dependencies
-npm install
-
-# Run dev server
-npm run dev
-```
-
-**Access:**
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-
-## Project Structure
-
-```
-.
-├── apps/
-│   ├── web/                    # Next.js frontend
-│   │   ├── src/
-│   │   │   ├── app/
-│   │   │   │   ├── admin/      # Admin panel pages
-│   │   │   │   │   ├── login/
-│   │   │   │   │   ├── dashboard/
-│   │   │   │   │   ├── agents/
-│   │   │   │   │   ├── tools/
-│   │   │   │   │   ├── knowledge/
-│   │   │   │   │   ├── sessions/
-│   │   │   │   │   └── settings/
-│   │   │   │   └── ...         # Public pages
-│   │   │   ├── components/
-│   │   │   │   ├── ui/         # Base UI components
-│   │   │   │   ├── admin/      # Admin-specific components
-│   │   │   │   ├── features/   # Feature components
-│   │   │   │   └── shared/     # Shared components
-│   │   │   ├── hooks/          # Custom hooks
-│   │   │   ├── lib/            # Utilities
-│   │   │   └── config/         # Static config
-│   │   └── Dockerfile
-│   │
-│   └── ai-service/             # FastAPI backend
-│       ├── src/
-│       │   ├── api/
-│       │   │   ├── routes/
-│       │   │   │   ├── admin/  # Admin API endpoints
-│       │   │   │   │   ├── auth.py
-│       │   │   │   │   ├── agents.py
-│       │   │   │   │   ├── tools.py
-│       │   │   │   │   ├── knowledge.py
-│       │   │   │   │   ├── sessions.py
-│       │   │   │   │   └── dashboard.py
-│       │   │   │   └── chat.py
-│       │   │   ├── deps/       # Dependencies (auth)
-│       │   │   └── schemas/    # Pydantic schemas
-│       │   ├── agent/          # AI agent system
-│       │   ├── database/       # Models & connection
-│       │   └── services/       # Business logic (auth)
-│       ├── tests/
-│       └── Dockerfile
-│
-├── infrastructure/
-│   ├── postgres/
-│   │   └── init.sql            # Database initialization
-│   └── cloudflared/
-│       ├── config.yml          # Tunnel configuration
-│       └── credentials.json    # Tunnel credentials (not in git)
-│
-├── docs/                       # Documentation
-├── docker-compose.yml          # Development
-├── docker-compose.prod.yml     # Production
-├── .env.example
-└── README.md
-```
-
-## Environment Variables
-
-| Variable | Description | Dev Default | Prod Default |
-|----------|-------------|-------------|--------------|
-| `DATABASE_URL` | PostgreSQL connection | `localhost:5452` | `localhost:5442` |
-| `OPENROUTER_API_KEY` | OpenRouter API key | - | - |
-| `OPENAI_API_KEY` | Same as OpenRouter key | - | - |
-| `OPENAI_BASE_URL` | OpenRouter base URL | `https://openrouter.ai/api/v1` | same |
-| `NEXT_PUBLIC_API_URL` | Backend API URL | `http://localhost:3344` | `https://api.yourdomain.com` |
-| `NEXT_PUBLIC_SITE_URL` | Frontend URL | `http://localhost:3343` | `https://yourdomain.com` |
-
-**Admin Panel Variables:**
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `ADMIN_USERNAME` | Default admin username | `admin` |
-| `DEFAULT_ADMIN_PASSWORD` | Initial admin password (used on first startup) | `admin123` |
-| `JWT_SECRET_KEY` | Secret key for JWT tokens | (generated) |
-| `JWT_ACCESS_TOKEN_EXPIRE_MINUTES` | Access token expiry | `15` |
-| `JWT_REFRESH_TOKEN_EXPIRE_DAYS` | Refresh token expiry | `7` |
-
-## API Endpoints
-
-### Public Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/health` | Health check |
-| `GET` | `/docs` | Swagger documentation |
-| `POST` | `/api/chat/{agent_slug}` | Send message to AI agent |
-| `GET` | `/api/chat/{agent_slug}/history/{session_id}` | Get chat history |
-
-### Admin Endpoints (Authentication Required)
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/api/admin/auth/login` | Admin login |
-| `POST` | `/api/admin/auth/logout` | Admin logout |
-| `POST` | `/api/admin/auth/refresh` | Refresh access token |
-| `GET` | `/api/admin/auth/me` | Get current admin info |
-| `POST` | `/api/admin/auth/change-password` | Change admin password |
-| `GET/POST` | `/api/admin/agents` | List/create agents |
-| `GET/PUT/DELETE` | `/api/admin/agents/{id}` | Agent CRUD |
-| `GET/POST` | `/api/admin/tools` | List/create tools |
-| `GET/PUT/DELETE` | `/api/admin/tools/{id}` | Tool CRUD |
-| `GET/POST` | `/api/admin/knowledge` | List/create documents |
-| `POST` | `/api/admin/knowledge/upload` | Upload document file |
-| `GET/PUT/DELETE` | `/api/admin/knowledge/{id}` | Document CRUD |
-| `GET` | `/api/admin/sessions` | List chat sessions |
-| `GET/DELETE` | `/api/admin/sessions/{id}` | Session detail/delete |
-| `GET` | `/api/admin/dashboard/stats` | Dashboard statistics |
-
-## Core Features
-
-### AI-Powered Portfolio
-- **Interactive Chat Assistant**: Visitors can chat with an AI that knows about your background and projects
-- **Intelligent Responses**: AI can answer questions about your experience, skills, and work
-- **Contact Collection**: AI can gather visitor contact information and schedule meetings
-
-### Admin Panel
-The admin panel provides a web interface for managing AI agents, tools, knowledge documents, and chat sessions.
-
-**Key Features:**
-- **Dashboard**: Overview of system statistics and recent activity
-- **Agents**: Configure AI agent settings (model, temperature, system prompts)
-- **Tools**: Manage available tools for agents
-- **Knowledge**: Upload and manage RAG documents (PDF, TXT, MD, JSON, CSV)
-- **Sessions**: View and manage chat sessions
-- **Settings**: System configuration and admin controls
-
-### Authentication
-
-- JWT-based authentication with httpOnly cookies
-- Access tokens expire in 15 minutes (configurable)
-- Refresh tokens expire in 7 days (configurable)
-- Passwords hashed with bcrypt
-- Supports both cookie and Bearer token authentication
-
-### Default Credentials
-
-On first startup, a default admin user is created:
-- **Username**: `admin` (or value of `ADMIN_USERNAME`)
-- **Password**: `admin123` (or value of `DEFAULT_ADMIN_PASSWORD`)
-
-**Important**: Change the default password immediately after first login via Settings page.
-
-### Access
-
-- Development: http://localhost:3343/admin
-- Production: https://yourdomain.com/admin
-
-## Cloudflare Tunnel
-
-The project includes Cloudflare Tunnel for public access in production.
-
-**Tunnel Configuration:**
-- Config: `infrastructure/cloudflared/config.yml`
-- Credentials: `infrastructure/cloudflared/credentials.json`
-
-**Manage Tunnel:**
-```bash
-# List tunnels
-cloudflared tunnel list
-
-# Check tunnel status
-docker compose -f docker-compose.prod.yml logs cloudflared
-```
-
-## Container Names
-
-| Service | Dev | Prod |
-|---------|-----|------|
-| Web | `tc-web-dev` | `tc-web` |
-| API | `tc-api-dev` | `tc-api` |
-| Postgres | `tc-postgres-dev` | `tc-postgres` |
-| Cloudflared | `tc-cloudflared-dev` | `tc-cloudflared` |
-
-## Image Tags
-
-Images are tagged separately for dev and prod to avoid rebuilding when switching:
-
-| Service | Dev | Prod |
-|---------|-----|------|
-| Web | `transparent-core-web:dev` | `transparent-core-web:prod` |
-| API | `transparent-core-api:dev` | `transparent-core-api:prod` |
-
-## Development Notes
-
-- Docker services are configured with `restart: "no"` (dev) or `restart: unless-stopped` (prod)
-- Dev and prod can run simultaneously (different ports, containers, volumes)
-- `NEXT_PUBLIC_*` variables are embedded at build time for production
-- Production images don't mount volumes (use built code)
-- Dev images mount source code for hot reload
-
-## License
-
-MIT
+- Current frontend package manager is `pnpm`
+- Docker config is kept as-is intentionally
+- Docs are organized from overview to module-specific so code review can start wide and then narrow

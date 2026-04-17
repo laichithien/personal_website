@@ -2,20 +2,7 @@
  * Public Portfolio API client
  * Fetches portfolio data from the backend for the public website
  */
-
-/**
- * Get API base URL - called on each request to ensure fresh env vars
- * Server-side uses internal Docker URL, client-side uses public URL
- */
-function getApiBaseUrl(): string {
-  // Check if we're on the server
-  if (typeof window === "undefined") {
-    // Server-side: use internal Docker URL if available, fallback to public URL
-    return process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3344";
-  }
-  // Client-side: use public URL
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:3344";
-}
+import { getApiBaseUrl } from "@/lib/api-base";
 
 export interface HeroData {
   name: string;

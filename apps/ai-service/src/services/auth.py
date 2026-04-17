@@ -10,6 +10,7 @@ from sqlmodel import select
 
 from src.config import settings
 from src.database.models import AdminUser
+from src.utils.datetime import utcnow
 
 
 class AuthService:
@@ -104,7 +105,7 @@ class AuthService:
         if not AuthService.verify_password(password, admin.password_hash):
             return None
         # Update last login
-        admin.last_login = datetime.utcnow()
+        admin.last_login = utcnow()
         db.add(admin)
         await db.commit()
         await db.refresh(admin)
@@ -126,7 +127,7 @@ class AuthService:
     async def change_password(db: AsyncSession, admin: AdminUser, new_password: str) -> AdminUser:
         """Change admin password."""
         admin.password_hash = AuthService.hash_password(new_password)
-        admin.updated_at = datetime.utcnow()
+        admin.updated_at = utcnow()
         db.add(admin)
         await db.commit()
         await db.refresh(admin)

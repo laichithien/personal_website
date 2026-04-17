@@ -10,6 +10,7 @@ from src.api.deps.auth import CurrentAdmin
 from src.api.schemas.admin import BlogPostCreate, BlogPostResponse, BlogPostUpdate
 from src.database.connection import get_db
 from src.database.models import BlogPost
+from src.utils.datetime import utcnow
 
 router = APIRouter(prefix="/blog", tags=["admin-blog"])
 
@@ -62,7 +63,7 @@ async def create_blog_post(
 
     published_at = to_naive_utc(data.published_at)
     if data.is_published and not published_at:
-        published_at = datetime.utcnow()
+        published_at = utcnow()
 
     post = BlogPost(
         title=data.title,
@@ -103,13 +104,13 @@ async def update_blog_post(
         setattr(post, field, value)
 
     if data.is_published is True and not post.published_at:
-        post.published_at = to_naive_utc(data.published_at) or datetime.utcnow()
+        post.published_at = to_naive_utc(data.published_at) or utcnow()
     elif data.published_at is not None:
         post.published_at = to_naive_utc(data.published_at)
     if data.is_published is False and data.published_at is None:
         post.published_at = None
 
-    post.updated_at = datetime.utcnow()
+    post.updated_at = utcnow()
     await db.commit()
     await db.refresh(post)
     return post

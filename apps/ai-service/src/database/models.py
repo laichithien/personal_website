@@ -5,6 +5,8 @@ from sqlmodel import Field, SQLModel, Relationship
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import Column, JSON
 
+from src.utils.datetime import utcnow
+
 
 # ==========================================
 # Admin User Table
@@ -19,8 +21,8 @@ class AdminUser(SQLModel, table=True):
     username: str = Field(unique=True, index=True)
     password_hash: str  # bcrypt hashed password
     is_active: bool = True
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
     last_login: Optional[datetime] = None
 
 
@@ -41,8 +43,8 @@ class AgentConfig(SQLModel, table=True):
     system_prompt: str
     temperature: float = 0.7
     is_active: bool = True
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
 
     # Relationships
     tool_links: list["AgentToolLink"] = Relationship(back_populates="agent")
@@ -57,7 +59,7 @@ class ToolDefinition(SQLModel, table=True):
     name: str = Field(unique=True, index=True)  # Must match function name
     description: str  # For LLM to understand tool purpose
     is_active: bool = True
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
 
     # Relationships
     agent_links: list["AgentToolLink"] = Relationship(back_populates="tool")
@@ -89,8 +91,8 @@ class ChatSession(SQLModel, table=True):
     session_id: UUID = Field(default_factory=uuid4, unique=True, index=True)
     agent_slug: str = Field(index=True)
     user_identifier: Optional[str] = None  # Optional user tracking
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    last_activity: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
+    last_activity: datetime = Field(default_factory=utcnow)
 
     # Relationships
     messages: list["ChatMessage"] = Relationship(back_populates="session")
@@ -106,7 +108,7 @@ class ChatMessage(SQLModel, table=True):
     role: str  # "user" | "assistant" | "system"
     content: str
     tool_calls: Optional[dict[str, Any]] = Field(default=None, sa_column=Column(JSON))
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
 
     # Relationships
     session: ChatSession = Relationship(back_populates="messages")
@@ -126,8 +128,8 @@ class KnowledgeDocument(SQLModel, table=True):
     content: str
     source: str  # "cv", "project", "manual"
     doc_metadata: Optional[dict[str, Any]] = Field(default=None, sa_column=Column("metadata", JSON))  # JSON metadata
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
 
     # Relationships
     chunks: list["KnowledgeChunk"] = Relationship(back_populates="document")
@@ -143,7 +145,7 @@ class KnowledgeChunk(SQLModel, table=True):
     content: str
     embedding: list[float] = Field(sa_column=Column(Vector(768)))  # Gemini embedding size
     chunk_index: int
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
 
     # Relationships
     document: KnowledgeDocument = Relationship(back_populates="chunks")
@@ -161,7 +163,7 @@ class PortfolioSetting(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     key: str = Field(unique=True, index=True)  # "hero", "about", "education", "social", "lifestyle"
     value: dict[str, Any] = Field(sa_column=Column(JSON))
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
 
 
 class PortfolioExperience(SQLModel, table=True):
@@ -176,8 +178,8 @@ class PortfolioExperience(SQLModel, table=True):
     highlights: list[str] = Field(default=[], sa_column=Column(JSON))
     display_order: int = Field(default=0)
     is_active: bool = True
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
 
 
 class PortfolioTechStack(SQLModel, table=True):
@@ -191,8 +193,8 @@ class PortfolioTechStack(SQLModel, table=True):
     category: str  # "language", "ai", "backend", "frontend", "database", "devops"
     display_order: int = Field(default=0)
     is_active: bool = True
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
 
 
 class PortfolioProject(SQLModel, table=True):
@@ -210,8 +212,8 @@ class PortfolioProject(SQLModel, table=True):
     is_featured: bool = False
     display_order: int = Field(default=0)
     is_active: bool = True
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
 
 
 class PortfolioPublication(SQLModel, table=True):
@@ -226,8 +228,8 @@ class PortfolioPublication(SQLModel, table=True):
     year: int
     display_order: int = Field(default=0)
     is_active: bool = True
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
 
 
 class PortfolioAchievement(SQLModel, table=True):
@@ -242,8 +244,8 @@ class PortfolioAchievement(SQLModel, table=True):
     year: int
     display_order: int = Field(default=0)
     is_active: bool = True
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
 
 
 class PortfolioCourse(SQLModel, table=True):
@@ -257,8 +259,8 @@ class PortfolioCourse(SQLModel, table=True):
     focus: list[str] = Field(default=[], sa_column=Column(JSON))
     display_order: int = Field(default=0)
     is_active: bool = True
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
 
 
 # ==========================================
@@ -275,7 +277,7 @@ class SystemSetting(SQLModel, table=True):
     value: str  # Encrypted for sensitive values
     description: str = ""
     is_sensitive: bool = False  # If true, value is encrypted/masked in UI
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
 
 
 # ==========================================
@@ -297,8 +299,8 @@ class ContactLead(SQLModel, table=True):
     session_id: Optional[str] = None  # Link to chat session
     is_contacted: bool = False  # Has the owner followed up?
     notes: Optional[str] = None  # Admin notes
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)
 
 
 # ==========================================
@@ -319,5 +321,5 @@ class BlogPost(SQLModel, table=True):
     tags: list[str] = Field(default=[], sa_column=Column(JSON))
     is_published: bool = False
     published_at: Optional[datetime] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utcnow)
+    updated_at: datetime = Field(default_factory=utcnow)

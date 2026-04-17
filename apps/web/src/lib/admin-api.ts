@@ -2,10 +2,11 @@
  * Admin API client with cookie-based authentication
  */
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import { getClientApiBaseUrl } from "@/lib/api-base";
 
 // Admin API client with credentials support
 const adminApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:3334",
+  baseURL: getClientApiBaseUrl(),
   withCredentials: true, // Important for cookies
   headers: {
     "Content-Type": "application/json",

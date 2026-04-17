@@ -1,10 +1,8 @@
-# Schemas module
-# Re-export chat schemas from the parent schemas.py for backwards compatibility
-from src.api.schemas_ import (
-    ChatRequest,
-    ChatResponse,
+from src.api.schemas.chat import (
     ChatHistoryItem,
     ChatHistoryResponse,
+    ChatRequest,
+    ChatResponse,
     HealthResponse,
 )
 from src.api.schemas.admin import *
