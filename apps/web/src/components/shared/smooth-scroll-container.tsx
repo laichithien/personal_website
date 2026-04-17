@@ -82,7 +82,7 @@ export function SmoothScrollContainer({
 
     const collectVisibleSections = () =>
       Array.from(container.querySelectorAll("section[id]")).filter(
-        (section) => section.getClientRects().length > 0
+        (section): section is HTMLElement => section instanceof HTMLElement && section.getClientRects().length > 0
       );
 
     const findClosestSectionIndex = (sections: HTMLElement[]) => {
