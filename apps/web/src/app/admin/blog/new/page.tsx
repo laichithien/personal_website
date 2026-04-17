@@ -6,14 +6,14 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BlogPostForm } from "@/components/admin/blog-post-form";
 import { useCreateBlogPost } from "@/hooks/use-admin-api";
-import type { BlogPostCreate } from "@/lib/admin-api";
+import type { BlogPostCreate, BlogPostUpdate } from "@/lib/admin-api";
 
 export default function NewBlogPostPage() {
   const router = useRouter();
   const { mutateAsync, isPending } = useCreateBlogPost();
 
-  const handleSave = async (data: BlogPostCreate) => {
-    const response = await mutateAsync(data);
+  const handleSave = async (data: BlogPostCreate | BlogPostUpdate) => {
+    const response = await mutateAsync(data as BlogPostCreate);
     router.push(`/admin/blog/${response.data.id}`);
   };
 
