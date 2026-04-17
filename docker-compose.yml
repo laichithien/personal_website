@@ -56,4 +56,8 @@ services:
 # Kết nối vào mạng chung của Server (Nơi có Postgres-main và Tunnel)
 networks:
   main-network:
+<<<<<<< Updated upstream
     driver: bridge
+=======
+    external: true
+>>>>>>> Stashed changes

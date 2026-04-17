@@ -65,3 +65,4 @@ docker-compose.override.yml
 .turbo/
 .codex
 .codex/
+docker-compose.yml
