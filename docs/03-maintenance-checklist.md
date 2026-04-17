@@ -43,6 +43,7 @@ Use this as the cleanup baseline for future passes.
 - Update `README.md` when the main local dev command changes.
 - Update `docs/README.md` when adding a new major subsystem doc.
 - Keep docs organized from wide to narrow.
+- Read `docs/05-implementation-performance-guardrails.md` before adding new motion, gesture, or glass-heavy UI.
 
 ## Current Known Follow-Ups
 

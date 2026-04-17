@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { PublicBlogPostPreview } from "@/lib/blog-api";
 
@@ -47,10 +48,16 @@ export function BlogPreviewSection({ posts }: BlogPreviewSectionProps) {
             className="group rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm overflow-hidden hover:bg-white/[0.08] transition-colors"
           >
             {post.cover_image && (
-              <div
-                className="h-48 bg-cover bg-center"
-                style={{ backgroundImage: `linear-gradient(rgba(0,0,0,.15), rgba(0,0,0,.45)), url(${post.cover_image})` }}
-              />
+              <div className="relative h-48 overflow-hidden bg-zinc-900">
+                <Image
+                  src={post.cover_image}
+                  alt={post.title}
+                  fill
+                  sizes="(min-width: 1024px) 33vw, 100vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/15 to-black/45" />
+              </div>
             )}
             <div className="p-6">
               <div className="flex flex-wrap gap-2 mb-4">

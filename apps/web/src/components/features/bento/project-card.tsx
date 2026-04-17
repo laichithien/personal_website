@@ -3,6 +3,7 @@
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { ExpandableWidget } from "./expandable-widget";
 import { ExternalLink, Github } from "lucide-react";
+import Image from "next/image";
 import type { Project } from "@/lib/types";
 
 interface ProjectCardProps {
@@ -13,11 +14,13 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const expandedContent = (
     <div className="space-y-4">
       {project.image && (
-        <div className="rounded-xl overflow-hidden bg-white/5">
-          <img
+        <div className="relative h-48 overflow-hidden rounded-xl bg-white/5">
+          <Image
             src={project.image}
             alt={project.title}
-            className="w-full h-48 object-cover"
+            fill
+            sizes="(min-width: 1024px) 720px, (min-width: 768px) 600px, 100vw"
+            className="object-cover"
           />
         </div>
       )}

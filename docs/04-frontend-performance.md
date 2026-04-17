@@ -36,3 +36,12 @@ This pass keeps the current visual language, but removes the most expensive unne
 
 - Prefer CSS and browser-native behavior for scrolling, containment, and static atmospherics.
 - Spend JavaScript animation budget only on user-triggered transitions or clear information hierarchy.
+
+## Current Priority Order
+
+If another optimization pass is needed, work in this order:
+
+1. Image delivery and sizing
+2. Repeated `whileInView` and child-level animation density
+3. Split desktop and mobile section-scroller logic further if interaction complexity grows
+4. Reduce `ExpandableWidget` interaction cost only after profiling confirms it is a hotspot

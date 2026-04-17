@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MeshBackground } from "@/components/ui/mesh-background";
@@ -50,10 +51,15 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
           </header>
 
           {post.cover_image && (
-            <div
-              className="rounded-3xl overflow-hidden border border-white/10 h-[340px] md:h-[420px] bg-cover bg-center mb-12"
-              style={{ backgroundImage: `url(${post.cover_image})` }}
-            />
+            <div className="relative mb-12 h-[340px] overflow-hidden rounded-3xl border border-white/10 md:h-[420px]">
+              <Image
+                src={post.cover_image}
+                alt={post.title}
+                fill
+                sizes="(min-width: 768px) 896px, 100vw"
+                className="object-cover"
+              />
+            </div>
           )}
 
           <div className="rounded-3xl border border-white/10 bg-white/5 p-8 md:p-10">

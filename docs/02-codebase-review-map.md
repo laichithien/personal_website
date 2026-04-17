@@ -92,7 +92,16 @@ If time is short, review in this order:
 2. `apps/web/src/components/shared/smooth-scroll-container.tsx`
 3. `apps/web/src/components/features/chat/*`
 4. `apps/web/src/components/features/hero/hero-section.tsx`
-5. `apps/ai-service/src/api/routes/chat.py`
-6. `apps/ai-service/src/agent/context.py`
-7. `apps/ai-service/src/api/routes/admin/blog.py`
-8. `apps/ai-service/src/database/models.py`
+5. `apps/web/src/components/shared/floating-dock.tsx`
+6. `apps/web/src/hooks/use-contained-scroll.ts`
+7. `apps/ai-service/src/api/routes/chat.py`
+8. `apps/ai-service/src/agent/context.py`
+9. `apps/ai-service/src/api/routes/admin/blog.py`
+10. `apps/ai-service/src/database/models.py`
+
+## Read Before Implementing UI
+
+If the task involves animation, blur, scrolling, or responsive interaction changes, read these first:
+
+1. `docs/04-frontend-performance.md`
+2. `docs/05-implementation-performance-guardrails.md`

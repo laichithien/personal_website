@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { MeshBackground } from "@/components/ui/mesh-background";
 import { fetchBlogPosts } from "@/lib/blog-api";
@@ -33,14 +34,20 @@ export default async function BlogPage() {
               className="block rounded-3xl border border-white/10 bg-white/5 hover:bg-white/[0.08] transition-colors overflow-hidden"
             >
               <div className="grid grid-cols-1 md:grid-cols-[220px_minmax(0,1fr)]">
-                <div
-                  className="aspect-square h-full min-h-[220px] bg-zinc-900 bg-cover bg-center"
-                  style={
-                    post.cover_image
-                      ? { backgroundImage: `linear-gradient(rgba(0,0,0,.12), rgba(0,0,0,.45)), url(${post.cover_image})` }
-                      : undefined
-                  }
-                />
+                <div className="relative aspect-square h-full min-h-[220px] overflow-hidden bg-zinc-900">
+                  {post.cover_image ? (
+                    <>
+                      <Image
+                        src={post.cover_image}
+                        alt={post.title}
+                        fill
+                        sizes="(min-width: 768px) 220px, 100vw"
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/12 to-black/45" />
+                    </>
+                  ) : null}
+                </div>
                 <div className="min-w-0 p-8">
                   <div className="flex flex-wrap gap-2 mb-4">
                     {post.tags.map((tag) => (

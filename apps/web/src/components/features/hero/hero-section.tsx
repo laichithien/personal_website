@@ -69,10 +69,10 @@ export function HeroSection({
                       src={avatarSrc}
                       alt={data.name}
                       fill
+                      sizes="(min-width: 1280px) 224px, (min-width: 768px) 208px, 176px"
                       className="object-cover object-top"
                       priority
                       onError={() => setAvatarFailed(true)}
-                      unoptimized
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-cyan-500/20 to-sky-500/20 flex items-center justify-center">
