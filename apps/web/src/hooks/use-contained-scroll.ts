@@ -12,12 +12,12 @@ export function useContainedScroll<T extends HTMLElement>(containerRef: RefObjec
 
     const previousOverscrollBehaviorY = container.style.overscrollBehaviorY;
     const previousTouchAction = container.style.touchAction;
-    const previousWebkitOverflowScrolling = container.style.webkitOverflowScrolling;
+    const previousWebkitOverflowScrolling = (container.style as any).webkitOverflowScrolling;
 
     // Native scrolling is smoother and avoids wheel/touch hijacking.
     container.style.overscrollBehaviorY = "contain";
     container.style.touchAction = shouldLockHorizontalSwipe ? "pan-y" : "pan-x pan-y";
-    container.style.webkitOverflowScrolling = "touch";
+    (container.style as any).webkitOverflowScrolling = "touch";
 
     const handleTouchStart = (event: TouchEvent) => {
       const touch = event.touches[0];
@@ -67,7 +67,7 @@ export function useContainedScroll<T extends HTMLElement>(containerRef: RefObjec
     return () => {
       container.style.overscrollBehaviorY = previousOverscrollBehaviorY;
       container.style.touchAction = previousTouchAction;
-      container.style.webkitOverflowScrolling = previousWebkitOverflowScrolling;
+      (container.style as any).webkitOverflowScrolling = previousWebkitOverflowScrolling;
       container.removeEventListener("touchstart", handleTouchStart);
       container.removeEventListener("touchmove", handleTouchMove);
       container.removeEventListener("touchend", handleTouchEnd);
