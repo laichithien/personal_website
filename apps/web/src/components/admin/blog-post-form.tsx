@@ -150,15 +150,23 @@ export function BlogPostForm({ initialData, isSaving = false, onSave }: BlogPost
     }
   };
 
+  const sectionsRef = useRef<HTMLElement[]>([]);
+
+  const collectVisibleSections = () => {
+    if (typeof document === 'undefined') return [];
+    return Array.from(document.querySelectorAll("h1, h2, h3")) as HTMLElement[];
+  };
+
   useEffect(() => {
     if (!isEditMode || !autosaveEnabled || !isDirty || isSaving || isAutosaving) return;
 
     const timer = window.setTimeout(() => {
+      sectionsRef.current = collectVisibleSections();
       void save("autosave");
     }, Math.max(5, autosaveInterval) * 1000);
 
     return () => window.clearTimeout(timer);
-  }, [autosaveEnabled, autosaveInterval, isDirty, isEditMode, isSaving, isAutosaving]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [autosaveEnabled, autosaveInterval, isDirty, isEditMode, isSaving, isAutosaving, collectVisibleSections]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <form
