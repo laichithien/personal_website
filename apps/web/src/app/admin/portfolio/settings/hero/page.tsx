@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, User } from "lucide-react";
+import { ArrowLeft, Loader2, Upload, User, X } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,6 +29,9 @@ const defaultHeroData: HeroData = {
   location: "",
 };
 
+const MAX_AVATAR_FILE_SIZE = 2 * 1024 * 1024;
+const SUPPORTED_AVATAR_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+
 export default function HeroSettingsPage() {
   const router = useRouter();
   const { data: setting, isLoading } = usePortfolioSetting("hero");
@@ -35,19 +39,63 @@ export default function HeroSettingsPage() {
 
   const [formData, setFormData] = useState<HeroData>(defaultHeroData);
   const [error, setError] = useState("");
+  const [avatarInputMode, setAvatarInputMode] = useState<"upload" | "url">("upload");
+  const [isReadingAvatar, setIsReadingAvatar] = useState(false);
 
   useEffect(() => {
     if (setting?.value) {
       const value = setting.value as unknown as HeroData;
+      const avatar = value.avatar || "";
       setFormData({
         name: value.name || "",
         title: value.title || "",
         tagline: value.tagline || "",
-        avatar: value.avatar || "",
+        avatar,
         location: value.location || "",
       });
+      setAvatarInputMode(avatar.startsWith("data:image/") ? "upload" : "url");
     }
   }, [setting]);
+
+  const updateAvatar = (avatar: string) => {
+    setFormData((current) => ({ ...current, avatar }));
+  };
+
+  const clearAvatar = () => {
+    updateAvatar("");
+  };
+
+  const handleAvatarFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setError("");
+
+    if (!SUPPORTED_AVATAR_TYPES.has(file.type)) {
+      setError("Avatar phải là JPG, PNG, WEBP hoặc GIF.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_AVATAR_FILE_SIZE) {
+      setError("Avatar quá lớn. Giữ file dưới 2MB để tránh nặng DB và payload.");
+      event.target.value = "";
+      return;
+    }
+
+    setIsReadingAvatar(true);
+
+    try {
+      const dataUrl = await readFileAsDataUrl(file);
+      updateAvatar(dataUrl);
+      setAvatarInputMode("upload");
+    } catch {
+      setError("Không đọc được file avatar.");
+    } finally {
+      setIsReadingAvatar(false);
+      event.target.value = "";
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,16 +195,94 @@ export default function HeroSettingsPage() {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-zinc-400 mb-1.5">
-              Avatar URL
-            </label>
-            <Input
-              value={formData.avatar}
-              onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
-              placeholder="/images/avatar.jpg"
-              className="bg-zinc-800/50 border-zinc-700"
-            />
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-3">
+              <label className="block text-sm font-medium text-zinc-400">
+                Avatar
+              </label>
+              <div className="inline-flex rounded-lg border border-zinc-700 bg-zinc-800/60 p-1 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setAvatarInputMode("upload")}
+                  className={`rounded-md px-3 py-1.5 transition-colors ${
+                    avatarInputMode === "upload"
+                      ? "bg-cyan-500/20 text-cyan-300"
+                      : "text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  Upload
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAvatarInputMode("url")}
+                  className={`rounded-md px-3 py-1.5 transition-colors ${
+                    avatarInputMode === "url"
+                      ? "bg-cyan-500/20 text-cyan-300"
+                      : "text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  URL
+                </button>
+              </div>
+            </div>
+
+            {formData.avatar ? (
+              <div className="flex items-center gap-4 rounded-xl border border-zinc-800 bg-zinc-950/40 p-4">
+                <div className="relative h-20 w-20 overflow-hidden rounded-xl border border-white/10 bg-zinc-900">
+                  <Image
+                    src={formData.avatar}
+                    alt="Avatar preview"
+                    fill
+                    unoptimized={formData.avatar.startsWith("data:")}
+                    sizes="80px"
+                    className="object-cover object-top"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-white">Avatar preview</p>
+                  <p className="mt-1 text-xs text-zinc-500 break-all line-clamp-2">
+                    {formData.avatar.startsWith("data:image/")
+                      ? "Stored as base64 data URL in DB"
+                      : formData.avatar}
+                  </p>
+                </div>
+                <Button type="button" variant="outline" size="sm" onClick={clearAvatar}>
+                  <X className="w-4 h-4" />
+                  Clear
+                </Button>
+              </div>
+            ) : null}
+
+            {avatarInputMode === "upload" ? (
+              <div className="rounded-xl border border-dashed border-zinc-700 bg-zinc-800/30 p-4 space-y-3">
+                <div className="flex items-center gap-2 text-sm text-zinc-400">
+                  <Upload className="w-4 h-4" />
+                  Upload avatar and store it directly in DB as base64
+                </div>
+                <Input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp,image/gif"
+                  onChange={handleAvatarFileChange}
+                  className="bg-zinc-800/50 border-zinc-700"
+                  disabled={isReadingAvatar}
+                />
+                <p className="text-xs text-zinc-500">
+                  Recommended: square-ish image, under 2MB.
+                </p>
+              </div>
+            ) : (
+              <div>
+                <Input
+                  value={formData.avatar}
+                  onChange={(e) => updateAvatar(e.target.value)}
+                  placeholder="https://... hoặc data:image/..."
+                  className="bg-zinc-800/50 border-zinc-700"
+                />
+                <p className="mt-2 text-xs text-zinc-500">
+                  Bạn vẫn có thể paste URL hoặc data URL nếu muốn.
+                </p>
+              </div>
+            )}
           </div>
 
           <div>
@@ -183,13 +309,13 @@ export default function HeroSettingsPage() {
         <div className="flex items-center gap-3">
           <Button
             type="submit"
-            disabled={isPending}
+            disabled={isPending || isReadingAvatar}
             className="bg-cyan-500 hover:bg-cyan-400 text-black"
           >
-            {isPending ? (
+            {isPending || isReadingAvatar ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Saving...
+                {isReadingAvatar ? "Reading avatar..." : "Saving..."}
               </>
             ) : (
               "Save Changes"
@@ -204,4 +330,19 @@ export default function HeroSettingsPage() {
       </form>
     </div>
   );
+}
+
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+        return;
+      }
+      reject(new Error("Invalid file result"));
+    };
+    reader.onerror = () => reject(reader.error ?? new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
 }

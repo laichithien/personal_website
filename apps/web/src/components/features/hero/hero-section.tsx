@@ -37,6 +37,7 @@ export function HeroSection({
   social: HeroSocialLinks;
 }) {
   const [avatarFailed, setAvatarFailed] = useState(false);
+  const isInlineAvatar = data.avatar?.startsWith("data:image/") ?? false;
   const avatarSrc = avatarFailed || !data.avatar ? "/images/avatar.example.jpg" : data.avatar;
 
   const scrollToTech = () => {
@@ -72,6 +73,7 @@ export function HeroSection({
                       sizes="(min-width: 1280px) 224px, (min-width: 768px) 208px, 176px"
                       className="object-cover object-top"
                       priority
+                      unoptimized={isInlineAvatar}
                       onError={() => setAvatarFailed(true)}
                     />
                   ) : (
