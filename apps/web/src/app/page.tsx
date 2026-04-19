@@ -176,7 +176,7 @@ export default async function Home() {
       </div>
 
         {/* Floating Elements */}
-        <FloatingDock />
+        <FloatingDock social={data.social} />
       <MessengerButton />
     </SmoothScrollContainer>
   );

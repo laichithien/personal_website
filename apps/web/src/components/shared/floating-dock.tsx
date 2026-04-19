@@ -27,11 +27,20 @@ const socialItems = [
   { icon: Mail, href: "mailto:contact@yourdomain.com", label: "Email" },
 ];
 
-export function FloatingDock() {
+export function FloatingDock({ social }: { social?: { github?: string; linkedin?: string; email?: string } }) {
   const [activeSection, setActiveSection] = useState("hero");
   const [isNavigating, setIsNavigating] = useState(false);
   const [isMobileLayout, setIsMobileLayout] = useState(false);
   const navigationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const resolvedSocialItems = useMemo(() => {
+    const items = [...socialItems];
+    if (social?.github) items[0] = { ...items[0], href: social.github };
+    if (social?.linkedin) items[1] = { ...items[1], href: social.linkedin };
+    if (social?.email) items[2] = { ...items[2], href: `mailto:${social.email}` };
+    return items;
+  }, [social]);
+
   const navItems = useMemo(
     () => (isMobileLayout ? mobileNavItems : desktopNavItems),
     [isMobileLayout]
@@ -156,7 +165,7 @@ export function FloatingDock() {
           <div className="w-px h-6 bg-white/10 mx-2" />
 
           {/* Social Links */}
-          {socialItems.map(({ icon: Icon, href, label }) => (
+          {resolvedSocialItems.map(({ icon: Icon, href, label }) => (
             <motion.button
               key={href}
               onClick={() => openExternal(href)}
