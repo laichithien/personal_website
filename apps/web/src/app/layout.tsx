@@ -5,13 +5,15 @@ import { QueryProvider } from "@/components/providers/query-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
+import { portfolioConfig } from "@/config/portfolio";
+
 export const metadata: Metadata = {
-  title: "Your Name | AI Engineer",
+  title: `${portfolioConfig.hero.name} | ${portfolioConfig.hero.title}`,
   description: "The Transparent Core - Digital Identity of an AI Engineer",
   keywords: ["AI Engineer", "Portfolio", "Homelab", "Full Stack"],
-  authors: [{ name: "Your Name" }],
+  authors: [{ name: portfolioConfig.hero.name }],
   openGraph: {
-    title: "Your Name | AI Engineer",
+    title: `${portfolioConfig.hero.name} | ${portfolioConfig.hero.title}`,
     description: "The Transparent Core",
     type: "website",
     locale: "vi_VN",

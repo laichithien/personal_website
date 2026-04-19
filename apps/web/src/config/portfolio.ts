@@ -1,7 +1,7 @@
 export const portfolioConfig = {
   hero: {
-    name: "Your Name",
-    title: "AI Engineer @ Your Company",
+    name: "Thien Lai",
+    title: "AI Engineer @ Vexere",
     tagline:
       "Building Agentic AI systems that automate complex workflows. Bridging cutting-edge GenAI with robust production systems.",
     avatar: "/images/avatar.jpg",
